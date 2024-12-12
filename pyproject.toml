@@ -1,0 +1,30 @@
+[build-system]
+requires = [ "setuptools", "wheel",]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "depcon"
+version = "0.1.0"
+description = "Convert requirements files to pyproject.toml format"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [ "toml", "requirements-parser",]
+keywords = [ "requirements", "dependencies", "pyproject", "conversion",]
+classifiers = [ "Development Status :: 4 - Beta", "Intended Audience :: Developers", "License :: OSI Approved :: MIT License", "Programming Language :: Python :: 3", "Programming Language :: Python :: 3.11", "Topic :: Software Development :: Build Tools",]
+[[project.authors]]
+name = "Lance Reinsmith"
+email = "info@k2rad.com"
+
+[project.license]
+text = "MIT"
+
+[project.scripts]
+depcon = "depcon:main"
+
+[project.urls]
+Homepage = "https://github.com/lancereinsmith/depcon"
+"Bug Tracker" = "https://github.com/lancereinsmith/depcon/issues"
+Documentation = "https://github.com/lancereinsmith/depcon#readme"
+
+[tool.uv]
+dev-dependencies = []
