@@ -7,21 +7,17 @@ resolution-markers = [
 
 [[package]]
 name = "depcon"
-version = "0.1.0"
+version = "0.1.1"
 source = { editable = "." }
 dependencies = [
-    { name = "packaging" },
     { name = "requirements-parser" },
     { name = "toml" },
-    { name = "types-setuptools" },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "packaging", specifier = "==24.2" },
-    { name = "requirements-parser", specifier = "==0.11.0" },
-    { name = "toml", specifier = "==0.10.2" },
-    { name = "types-setuptools", specifier = "==75.6.0.20241126" },
+    { name = "requirements-parser" },
+    { name = "toml" },
 ]
 
 [package.metadata.requires-dev]
