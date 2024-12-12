@@ -18,6 +18,8 @@ uvx install depcon
 
 ```
 depcon -r requirements.txt -d requirements-dev.txt -p pyproject.toml
+depcon -r requirements.in -p pyproject.toml
+depcon -r requirements.txt 
 ```
 
 ## Options
