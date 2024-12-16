@@ -22,14 +22,14 @@ from typing import Optional
 
 import requirements
 import toml
+from importlib.metadata import version
 
 
 def get_version():
-    """Read version from pyproject.toml."""
+    """Get package version."""
     try:
-        data = toml.load(Path("pyproject.toml"))
-        return data["project"]["version"]
-    except (FileNotFoundError, KeyError):
+        return version("depcon")
+    except ImportError:
         return "0.1.0"  # fallback version
 
 

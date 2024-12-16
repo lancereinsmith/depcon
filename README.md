@@ -1,6 +1,6 @@
 # depcon
 
-`depcon` is a tool designed to simplify the migration of dependency specifications from traditional `requirements.txt`, `requirements.in`, `requirements-dev.txt`, and `requirements-dev.in` files into the modern `pyproject.toml` format created using the [`hatch`](https://github.com/pypa/hatch) or [`universal build`](https://pypi.org/project/universal-build/) (`uv`) tools. This allows for a streamlined, standardized, and more maintainable approach to dependency management in Python projects.
+`depcon` is a tool designed to simplify the migration of dependency specifications from traditional `requirements.txt`, `requirements.in`, `requirements-dev.txt`, and `requirements-dev.in` files into the modern `pyproject.toml` format created using the [`uv`](https://docs.astral.sh/uv/) or [`hatch`](https://github.com/pypa/hatch) tools. This allows for a streamlined, standardized, and more maintainable approach to dependency management in Python projects.
 
 ## Rationale
 
@@ -17,11 +17,11 @@ By migrating dependencies to `pyproject.toml`, you can leverage a unified and de
 You can install `depcon` via [pipx](https://pypa.github.io/pipx/) or the `uvx` plugin manager:
 
 ```bash
-# Using pipx
-pipx install depcon
-
 # Using uvx
 uvx install depcon
+
+# Using pipx
+pipx install depcon
 ```
 
 ## Usage
