@@ -43,14 +43,16 @@ def parse_requirements(file_path: Path) -> list[str]:
 
     dependencies = []
     for requirement in requirements.parse(file_path.read_text()):
-        name = requirement.name
-        if len(requirement.specs) > 0:
-            specs = [
-                f"{conditional}{version}" for conditional, version in requirement.specs
-            ]
-            dependencies.append(f"{name}{','.join(specs)}")
-        else:
-            dependencies.append(name)
+        if requirement:
+            name = requirement.name
+            if len(requirement.specs) > 0:
+                specs = [
+                    f"{conditional}{version}"
+                    for conditional, version in requirement.specs
+                ]
+                dependencies.append(f"{name}{','.join(specs)}")
+            else:
+                dependencies.append(name)
     return dependencies
 
 
