@@ -23,14 +23,20 @@ By migrating dependencies to `pyproject.toml`, you can leverage a unified and de
 
 ## Installation
 
-You can install `depcon` via [pipx](https://pypa.github.io/pipx/) or the `uvx` plugin manager:
+You can install `depcon` using either `pipx` or `uv`:
 
 ```bash
-# Using uvx
-uvx install depcon
-
-# Using pipx
+# Install with pipx
 pipx install depcon
+
+# Install with uv
+uv tool install depcon
+```
+
+You can also run it directly with `uvx` without installing:
+
+```bash
+uvx depcon
 ```
 
 ## Usage
