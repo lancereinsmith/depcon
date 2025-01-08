@@ -17,12 +17,12 @@ Usage:
 """
 
 import argparse
+from importlib.metadata import version
 from pathlib import Path
 from typing import Optional
 
 import requirements
 import toml
-from importlib.metadata import version
 
 
 def get_version():
@@ -60,9 +60,16 @@ def update_pyproject_toml(
     requirements_path: Optional[Path] = None,
     requirements_dev_path: Optional[Path] = None,
     pyproject_path: Path = Path("pyproject.toml"),
+    append: bool = False,
 ) -> None:
-    """Update pyproject.toml with dependencies from requirements files."""
+    """Update pyproject.toml with dependencies from requirements files.
 
+    Args:
+        requirements_path: Path to requirements.txt file
+        requirements_dev_path: Path to requirements-dev.txt file
+        pyproject_path: Path to pyproject.toml file
+        append: If True, append to existing dependencies instead of overwriting
+    """
     # Read existing pyproject.toml or create default structure
     if pyproject_path.exists():
         data = toml.load(pyproject_path)
@@ -96,13 +103,73 @@ def update_pyproject_toml(
 
     # Update dependencies if requirements file is provided
     if requirements_path:
-        dependencies = parse_requirements(requirements_path)
-        data["project"]["dependencies"] = dependencies
+        new_dependencies = parse_requirements(requirements_path)
+        if append and "dependencies" in data["project"]:
+            # Create a dict of existing dependencies for easy lookup
+            existing_deps = {}
+            for dep in data["project"]["dependencies"]:
+                name = (
+                    dep.split("[")[0]
+                    .split(">=")[0]
+                    .split("<=")[0]
+                    .split("==")[0]
+                    .split(">")[0]
+                    .split("<")[0]
+                    .strip()
+                )
+                existing_deps[name] = dep
+
+            # Merge new dependencies, preferring new versions over old ones
+            for dep in new_dependencies:
+                name = (
+                    dep.split("[")[0]
+                    .split(">=")[0]
+                    .split("<=")[0]
+                    .split("==")[0]
+                    .split(">")[0]
+                    .split("<")[0]
+                    .strip()
+                )
+                existing_deps[name] = dep
+
+            data["project"]["dependencies"] = list(existing_deps.values())
+        else:
+            data["project"]["dependencies"] = new_dependencies
 
     # Update dev dependencies if requirements-dev file is provided
     if requirements_dev_path:
-        dev_dependencies = parse_requirements(requirements_dev_path)
-        data["tool"]["uv"]["dev-dependencies"] = dev_dependencies
+        new_dev_dependencies = parse_requirements(requirements_dev_path)
+        if append and "dev-dependencies" in data["tool"]["uv"]:
+            # Create a dict of existing dev dependencies for easy lookup
+            existing_dev_deps = {}
+            for dep in data["tool"]["uv"]["dev-dependencies"]:
+                name = (
+                    dep.split("[")[0]
+                    .split(">=")[0]
+                    .split("<=")[0]
+                    .split("==")[0]
+                    .split(">")[0]
+                    .split("<")[0]
+                    .strip()
+                )
+                existing_dev_deps[name] = dep
+
+            # Merge new dev dependencies, preferring new versions over old ones
+            for dep in new_dev_dependencies:
+                name = (
+                    dep.split("[")[0]
+                    .split(">=")[0]
+                    .split("<=")[0]
+                    .split("==")[0]
+                    .split(">")[0]
+                    .split("<")[0]
+                    .strip()
+                )
+                existing_dev_deps[name] = dep
+
+            data["tool"]["uv"]["dev-dependencies"] = list(existing_dev_deps.values())
+        else:
+            data["tool"]["uv"]["dev-dependencies"] = new_dev_dependencies
 
     # Write updated content back to pyproject.toml
     toml.dump(data, open(pyproject_path, "w"))
@@ -138,6 +205,12 @@ def main():
         default=Path("pyproject.toml"),
         help="Path to pyproject.toml. Defaults to pyproject.toml and creates it if it doesn't exist.",
     )
+    parser.add_argument(
+        "-a",
+        "--append",
+        action="store_true",
+        help="Append to existing dependencies instead of overwriting them",
+    )
 
     args = parser.parse_args()
 
@@ -150,6 +223,7 @@ def main():
         requirements_path=args.requirements,
         requirements_dev_path=args.requirements_dev,
         pyproject_path=args.pyproject,
+        append=args.append,
     )
 
     print(f"\nSuccessfully updated {args.pyproject}")

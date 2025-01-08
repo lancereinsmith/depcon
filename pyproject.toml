@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "depcon"
-version = "0.1.4"
+version = "0.1.5"
 description = "Convert requirements files to pyproject.toml format used in uv"
 readme = "README.md"
 requires-python = ">=3.11"

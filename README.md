@@ -19,7 +19,7 @@ Traditional `requirements.txt` files are widely used to manage dependencies in P
 - Managing separate files for base and development dependencies can be error-prone.
 - Adding, updating, or syncing dependencies requires external tools like `pip-tools`.
 
-By migrating dependencies to `pyproject.toml`, you can leverage a unified and declarative format for dependency and project configuration. This format is now the standard for Python packaging and works seamlessly with tools like `hatch`, `poetry`, and `uv`.
+By migrating dependencies to `pyproject.toml`, you can leverage a unified and declarative format for dependency and project configuration. This format is now the standard for Python packaging and works seamlessly with tools like `uv`.
 
 ## Installation
 
@@ -88,7 +88,7 @@ Once dependencies are migrated, sync and lock them with uv:
 uv sync
 ```
 
-This will resolve, install, and lock all dependencies into a hatch.lock or requirements.lock file.
+This will resolve, install, and lock all dependencies into a uv.lock or requirements.lock file.
 
 Additional Options
 
@@ -98,12 +98,10 @@ Additional Options
 depcon -r requirements.in
 ```
 
-* Use depcon with different tools (e.g., poetry) by specifying custom behavior (future support planned).
-
 ### Benefits of this Workflow
 
 * Unified Configuration: Manage dependencies and metadata in a single pyproject.toml file.
-* Modern Tools: Leverage the power of uv, hatch, and modern packaging workflows.
+* Modern Tools: Leverage the power of uv and other modern packaging workflows.
 * Ease of Use: Simplify the migration and maintenance of dependencies.
 
 ## Review of command line options
@@ -111,13 +109,22 @@ depcon -r requirements.in
 - `-r`, `--requirements`: Path to requirements.txt file
 - `-d`, `--requirements-dev`: Path to requirements-dev.txt file
 - `-p`, `--pyproject`: Path to target pyproject.toml file (default: ./pyproject.toml)
+- `-a`, `--append`: Append to existing dependencies instead of overwriting them
 
 ### Examples
 
-```
+```bash
+# Overwrite existing dependencies (default behavior)
 depcon -r requirements.txt -d requirements-dev.txt -p pyproject.toml
-depcon -r requirements.in -p pyproject.toml
-depcon -r requirements.txt 
+
+# Append to existing dependencies
+depcon -r requirements.txt -d requirements-dev.txt -p pyproject.toml --append
+
+# Append only base requirements
+depcon -r requirements.in -p pyproject.toml --append
+
+# Append only dev requirements
+depcon -d requirements-dev.txt --append
 ```
 
 ## Contributing
