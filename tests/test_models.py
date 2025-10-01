@@ -1,5 +1,7 @@
 """Tests for data models."""
 
+from pathlib import Path
+
 import pytest
 
 from depcon.models import (

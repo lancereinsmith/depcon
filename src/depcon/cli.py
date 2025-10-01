@@ -381,7 +381,7 @@ def _validate_dependency(dep: DependencySpec) -> bool:
         # Try to parse the dependency string
         from packaging.requirements import Requirement
 
-        req = Requirement(dep.to_pep621_string())
+        Requirement(dep.to_pep621_string())
         return True
     except Exception:
         return False

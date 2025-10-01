@@ -259,13 +259,9 @@ def group_dependencies_by_type(
     """Group dependencies by type (dev, test, docs, etc.)."""
     groups = {"main": [], "dev": [], "test": [], "docs": []}
 
-    # Common development/testing packages
+    # Common development packages
     dev_packages = {
         "pytest",
-        "pytest-cov",
-        "pytest-mock",
-        "pytest-xdist",
-        "pytest-asyncio",
         "black",
         "isort",
         "flake8",
@@ -275,8 +271,6 @@ def group_dependencies_by_type(
         "coverage",
         "tox",
         "nox",
-        "sphinx",
-        "mkdocs",
         "jupyter",
         "ipython",
         "notebook",
@@ -284,7 +278,6 @@ def group_dependencies_by_type(
     }
 
     test_packages = {
-        "pytest",
         "pytest-cov",
         "pytest-mock",
         "pytest-xdist",
@@ -307,15 +300,26 @@ def group_dependencies_by_type(
 
     for dep in dependencies:
         name = dep.name.lower()
+        categorized = False
 
+        # Check test packages first (more specific)
+        if name in test_packages:
+            groups["test"].append(dep)
+            categorized = True
+
+        # Check dev packages (broader category) - pytest is in both
         if name in dev_packages:
             groups["dev"].append(dep)
-        elif name in test_packages:
-            groups["test"].append(dep)
-        elif name in docs_packages:
+            categorized = True
+
+        # Check docs packages
+        if name in docs_packages:
             groups["docs"].append(dep)
-        else:
+            categorized = True
+
+        # If not categorized, add to main
+        if not categorized:
             groups["main"].append(dep)
 
-    # Remove empty groups
-    return {k: v for k, v in groups.items() if v}
+    # Always return all groups, even if empty
+    return groups

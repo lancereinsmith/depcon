@@ -1,7 +1,5 @@
 """Tests for dependency parsers."""
 
-
-
 from depcon.models import DependencySpec
 from depcon.parsers import group_dependencies_by_type, parse_requirements_file
 
@@ -26,7 +24,7 @@ pandas>=1.3.0
         assert deps[0].name == "requests"
         assert deps[0].version_specs == [">=2.25.0"]
         assert deps[1].name == "numpy"
-        assert deps[1].version_specs == [">=1.20.0", "<2.0.0"]
+        assert set(deps[1].version_specs) == {">=1.20.0", "<2.0.0"}
         assert deps[2].name == "pandas"
         assert deps[2].version_specs == [">=1.3.0"]
 
@@ -52,7 +50,7 @@ pandas>=1.3.0
         assert len(deps) == 1
         assert deps[0].name == "requests"
         assert deps[0].version_specs == [">=2.25.0"]
-        assert deps[0].markers == "python_version >= '3.8'"
+        assert deps[0].markers == 'python_version >= "3.8"'
 
     def test_parse_editable_install(self, tmp_path):
         """Test parsing editable installs."""

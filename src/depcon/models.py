@@ -48,7 +48,7 @@ class DependencySpec(BaseModel):
             parts.extend(self.version_specs)
 
         if self.url:
-            parts.append(f"@ {self.url}")
+            parts.append(f" @ {self.url}")
         elif self.path:
             prefix = "-e " if self.editable else ""
             parts = [f"{prefix}{self.path}"]
