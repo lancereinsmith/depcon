@@ -294,20 +294,35 @@ class PyProjectUpdater:
         if not self.file_path.exists():
             return ProjectConfig(name="project-name")
 
+        data = None
+
+        # Try different TOML libraries in order of preference
         try:
-            import tomli
+            # Python 3.11+ built-in tomllib
+            import tomllib
 
             with open(self.file_path, "rb") as f:
-                data = tomli.load(f)
+                data = tomllib.load(f)
         except ImportError:
             try:
-                import toml
+                # tomli (faster, more modern)
+                import tomli
 
-                with open(self.file_path, "r", encoding="utf-8") as f:
-                    data = toml.load(f)
+                with open(self.file_path, "rb") as f:
+                    data = tomli.load(f)
             except ImportError:
-                # If no TOML library is available, return empty config
-                return ProjectConfig(name="project-name")
+                try:
+                    # toml (older, more compatible)
+                    import toml
+
+                    with open(self.file_path, "r", encoding="utf-8") as f:
+                        data = toml.load(f)
+                except ImportError:
+                    # If no TOML library is available, return empty config
+                    return ProjectConfig(name="project-name")
+
+        if data is None:
+            return ProjectConfig(name="project-name")
 
         # Extract project metadata
         project_data = data.get("project", {})
@@ -327,7 +342,6 @@ class PyProjectUpdater:
 
         # Extract dependencies
         if "dependencies" in project_data:
-
             # Convert dependency strings back to DependencySpec objects
             for dep_str in project_data["dependencies"]:
                 try:
