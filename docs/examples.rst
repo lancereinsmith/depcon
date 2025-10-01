@@ -287,7 +287,7 @@ Validate dependency specifications:
    depcon validate -f my-project.toml
 
 Integration Examples
--------------------
+---------------------
 
 uv Integration
 ~~~~~~~~~~~~~~

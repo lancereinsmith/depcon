@@ -127,48 +127,36 @@ main
 
 .. autofunction:: depcon.cli.main
 
-convert_command
-~~~~~~~~~~~~~~~
+convert
+~~~~~~~
 
-.. autofunction:: depcon.cli.convert_command
+.. autofunction:: depcon.cli.convert
 
-show_command
-~~~~~~~~~~~
+show
+~~~~
 
-.. autofunction:: depcon.cli.show_command
+.. autofunction:: depcon.cli.show
 
-validate_command
-~~~~~~~~~~~~~~~~
+validate
+~~~~~~~~
 
-.. autofunction:: depcon.cli.validate_command
+.. autofunction:: depcon.cli.validate
 
 Utility Functions
 -----------------
 
-.. autofunction:: depcon.cli.display_dependencies
+.. autofunction:: depcon.cli._print_dependency_summary
 
-.. autofunction:: depcon.cli.validate_dependencies
+.. autofunction:: depcon.cli._print_dependencies_table
+
+.. autofunction:: depcon.cli._validate_dependency
 
 Exceptions
 ----------
 
-depcon defines several custom exceptions for error handling:
-
-.. autoexception:: depcon.models.ValidationError
-
-.. autoexception:: depcon.parsers.ParseError
-
-.. autoexception:: depcon.generators.GenerationError
+depcon uses standard Python exceptions for error handling. No custom exceptions are defined.
 
 Constants
 ---------
 
-.. data:: depcon.models.DEFAULT_PYTHON_VERSION
-
-.. data:: depcon.models.DEFAULT_BUILD_BACKEND
-
-.. data:: depcon.parsers.DEVELOPMENT_PATTERNS
-
-.. data:: depcon.parsers.TEST_PATTERNS
-
-.. data:: depcon.parsers.DOCS_PATTERNS
+No module-level constants are defined in depcon.

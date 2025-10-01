@@ -312,7 +312,7 @@ For feature requests, include:
 * Additional context
 
 Development Guidelines
----------------------
+------------------------
 
 Architecture
 ~~~~~~~~~~~~

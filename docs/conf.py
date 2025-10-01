@@ -42,6 +42,8 @@ autodoc_default_options = {
 }
 
 autosummary_generate = True
+autosummary_ignore_module_all = True
+autosummary_imported_members = False
 napoleon_google_docstring = True
 napoleon_numpy_docstring = True
 napoleon_include_init_with_doc = False
@@ -55,7 +57,6 @@ myst_enable_extensions = [
     "fieldlist",
     "html_admonition",
     "html_image",
-    "linkify",
     "replacements",
     "smartquotes",
     "substitution",
@@ -65,10 +66,16 @@ myst_enable_extensions = [
 # -- Intersphinx configuration -----------------------------------------------
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3/", None),
-    "click": ("https://click.palletsprojects.com/", None),
-    "pydantic": ("https://docs.pydantic.dev/", None),
-    "packaging": ("https://packaging.pypa.io/", None),
+    "click": ("https://click.palletsprojects.com/en/stable/", None),
+    "pydantic": ("https://docs.pydantic.dev/2.0/", None),
+    "packaging": ("https://packaging.pypa.io/en/stable/", None),
 }
 
 # -- Options for autodoc ----------------------------------------------------
 autodoc_mock_imports = ["rich", "tomli", "tomli_w"]
+autodoc_default_options = {
+    "members": True,
+    "undoc-members": True,
+    "show-inheritance": True,
+    "no-index": True,  # Prevent duplicate object descriptions
+}
