@@ -1,6 +1,18 @@
 """Package for converting requirements files to pyproject.toml format.
 
-This module imports the main entry point and version from the .main submodule.
+A modern, fully-featured tool for converting legacy requirements.txt files
+to the standardized pyproject.toml format with full PEP 621 support.
 """
 
-from .main import __version__, main
+from .cli import main
+from .models import ConversionOptions, DependencySpec, ProjectConfig
+from .parsers import parse_requirements_file
+
+__version__ = "0.2.1"
+__all__ = [
+    "main",
+    "ConversionOptions",
+    "DependencySpec",
+    "ProjectConfig",
+    "parse_requirements_file",
+]

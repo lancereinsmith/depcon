@@ -1,16 +1,47 @@
 [build-system]
-requires = [ "setuptools", "wheel",]
-build-backend = "setuptools.build_meta"
+requires = [
+    "hatchling",
+]
+build-backend = "hatchling.build"
 
 [project]
 name = "depcon"
-version = "0.1.6"
-description = "Convert requirements files to pyproject.toml format used in uv"
+version = "0.2.1"
+description = "Convert legacy requirements files to modern pyproject.toml format with full PEP 621 support"
 readme = "README.md"
-requires-python = ">=3.11"
-dependencies = [ "toml", "requirements-parser",]
-keywords = [ "requirements", "dependencies", "pyproject", "conversion",]
-classifiers = [ "Development Status :: 4 - Beta", "Intended Audience :: Developers", "License :: OSI Approved :: MIT License", "Programming Language :: Python :: 3", "Programming Language :: Python :: 3.11", "Topic :: Software Development :: Build Tools",]
+requires-python = ">=3.8"
+dependencies = [
+    "click>=8.0.0",
+    "packaging>=21.0",
+    "pydantic>=2.0.0",
+    "rich>=13.0.0",
+    "tomli>=2.0.0; python_version < '3.11'",
+    "tomli-w>=1.0.0",
+]
+keywords = [
+    "requirements",
+    "dependencies", 
+    "pyproject",
+    "conversion",
+    "pep621",
+    "dependency-management",
+    "uv",
+    "hatchling",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Build Tools",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
 [[project.authors]]
 name = "Lance Reinsmith"
 email = "info@k2rad.com"
@@ -19,12 +50,64 @@ email = "info@k2rad.com"
 text = "MIT"
 
 [project.scripts]
-depcon = "depcon:main"
+depcon = "depcon.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/lancereinsmith/depcon"
 "Bug Tracker" = "https://github.com/lancereinsmith/depcon/issues"
-Documentation = "https://github.com/lancereinsmith/depcon#readme"
+Documentation = "https://lancereinsmith.github.io/depcon/"
+Repository = "https://github.com/lancereinsmith/depcon"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "black>=23.0.0",
+    "ruff>=0.1.0",
+    "mypy>=1.0.0",
+]
+test = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "pytest-mock>=3.10.0",
+]
+docs = [
+    "sphinx>=5.0.0",
+    "sphinx-rtd-theme>=1.0.0",
+    "myst-parser>=1.0.0",
+    "sphinx-autodoc-typehints>=1.19.0",
+]
+all = [
+    "depcon[dev,test,docs]",
+]
 
 [tool.uv]
-dev-dependencies = []
+dev-dependencies = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "black>=23.0.0",
+    "ruff>=0.1.0",
+    "mypy>=1.0.0",
+    "pre-commit>=3.0.0",
+    "sphinx>=5.0.0",
+    "sphinx-rtd-theme>=1.0.0",
+    "myst-parser>=1.0.0",
+    "sphinx-autodoc-typehints>=1.19.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/depcon"]
+
+[tool.black]
+line-length = 88
+target-version = ['py38']
+
+[tool.ruff]
+line-length = 88
+target-version = "py38"
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true

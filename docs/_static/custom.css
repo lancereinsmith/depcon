@@ -1,0 +1,179 @@
+/* Custom CSS for depcon documentation */
+
+/* Override theme colors */
+:root {
+    --pst-color-primary: #2E8B57;
+    --pst-color-secondary: #228B22;
+    --pst-color-accent: #32CD32;
+}
+
+/* Custom styling for code blocks */
+.highlight {
+    border-radius: 6px;
+    border: 1px solid #e1e4e8;
+}
+
+/* Style for command examples */
+.cmd-example {
+    background-color: #f6f8fa;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    padding: 16px;
+    margin: 16px 0;
+}
+
+/* Style for feature highlights */
+.feature-highlight {
+    background-color: #f0f8ff;
+    border-left: 4px solid #2E8B57;
+    padding: 16px;
+    margin: 16px 0;
+}
+
+/* Style for warning boxes */
+.warning-box {
+    background-color: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 6px;
+    padding: 16px;
+    margin: 16px 0;
+}
+
+/* Style for info boxes */
+.info-box {
+    background-color: #d1ecf1;
+    border: 1px solid #bee5eb;
+    border-radius: 6px;
+    padding: 16px;
+    margin: 16px 0;
+}
+
+/* Custom table styling */
+.rst-content table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.rst-content table th {
+    background-color: #f6f8fa;
+    font-weight: 600;
+    border-bottom: 1px solid #d0d7de;
+}
+
+.rst-content table td {
+    border-bottom: 1px solid #d0d7de;
+}
+
+/* Style for badges */
+.badge {
+    display: inline-block;
+    padding: 4px 8px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1;
+    color: #fff;
+    background-color: #2E8B57;
+    border-radius: 4px;
+    margin: 2px;
+}
+
+/* Style for code inline */
+code {
+    background-color: #f6f8fa;
+    border: 1px solid #d0d7de;
+    border-radius: 3px;
+    padding: 2px 4px;
+    font-size: 85%;
+}
+
+/* Style for toctree */
+.rst-content .toctree-wrapper {
+    margin: 20px 0;
+}
+
+/* Style for section headers */
+.rst-content h1,
+.rst-content h2,
+.rst-content h3,
+.rst-content h4,
+.rst-content h5,
+.rst-content h6 {
+    color: #2E8B57;
+    margin-top: 24px;
+    margin-bottom: 16px;
+}
+
+/* Style for links */
+.rst-content a {
+    color: #2E8B57;
+    text-decoration: none;
+}
+
+.rst-content a:hover {
+    color: #228B22;
+    text-decoration: underline;
+}
+
+/* Style for admonitions */
+.rst-content .admonition {
+    border-radius: 6px;
+    border: 1px solid #d0d7de;
+}
+
+.rst-content .admonition-title {
+    font-weight: 600;
+    color: #2E8B57;
+}
+
+/* Style for literal blocks */
+.rst-content .literal-block {
+    background-color: #f6f8fa;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    padding: 16px;
+    overflow-x: auto;
+}
+
+/* Style for sidebar */
+.wy-side-nav-search {
+    background-color: #2E8B57;
+}
+
+.wy-side-nav-search input[type="text"] {
+    border-color: #228B22;
+}
+
+/* Style for navigation */
+.wy-menu-vertical a {
+    color: #2E8B57;
+}
+
+.wy-menu-vertical a:hover {
+    background-color: #f0f8ff;
+    color: #228B22;
+}
+
+/* Style for footer */
+.rst-footer-buttons {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid #d0d7de;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .rst-content {
+        padding: 20px;
+    }
+    
+    .rst-content table {
+        font-size: 14px;
+    }
+    
+    .rst-content .highlight {
+        font-size: 12px;
+    }
+}
