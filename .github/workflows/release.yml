@@ -49,25 +49,15 @@ jobs:
         depcon --version
 
     - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v1
       with:
         tag_name: ${{ github.ref_name || inputs.version }}
-        release_name: Release ${{ github.ref_name || inputs.version }}
+        name: Release ${{ github.ref_name || inputs.version }}
         draft: false
         prerelease: false
-
-    - name: Upload Release Assets
-      uses: actions/upload-release-asset@v1
+        files: dist/*
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: dist/
-        asset_name: dist
-        asset_content_type: application/zip
 
     - name: Publish to PyPI
       if: github.event_name == 'push'
