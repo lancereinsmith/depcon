@@ -6,7 +6,7 @@ import re
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 
 
 class DependencySpec(BaseModel):
@@ -22,14 +22,14 @@ class DependencySpec(BaseModel):
     editable: bool = Field(False, description="Whether this is an editable install")
     markers: Optional[str] = Field(None, description="Environment markers")
 
-    @validator("name")
+    @field_validator("name")
     def validate_name(cls, v: str) -> str:
         """Validate package name format."""
         if not v or not v.strip():
             raise ValueError("Package name cannot be empty")
         return v.strip().lower()
 
-    @validator("version_specs")
+    @field_validator("version_specs")
     def validate_version_specs(cls, v: List[str]) -> List[str]:
         """Validate version specifications."""
         for spec in v:
@@ -74,7 +74,7 @@ class DependencyGroup(BaseModel):
         None, description="Optional description of the group"
     )
 
-    @validator("name")
+    @field_validator("name")
     def validate_name(cls, v: str) -> str:
         """Validate group name."""
         if not v or not v.strip():
@@ -223,7 +223,7 @@ class ConversionOptions(BaseModel):
         default=True, description="Enable hatch tool configuration"
     )
 
-    @validator("requirements_files", "requirements_in_files")
+    @field_validator("requirements_files", "requirements_in_files")
     def validate_files_exist(cls, v: List[Path]) -> List[Path]:
         """Validate that input files exist."""
         for file_path in v:
