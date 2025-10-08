@@ -56,7 +56,7 @@ class PyProjectGenerator:
                 dep.to_pep621_string() for dep in self.config.dependencies
             ]
 
-        # Optional dependencies
+        # Optional dependencies (PEP 621 extras)
         if self.config.optional_dependencies:
             project["optional-dependencies"] = {}
             for group_name, group in self.config.optional_dependencies.items():
@@ -66,9 +66,24 @@ class PyProjectGenerator:
 
         content["project"] = project
 
-        # Tool configurations
+        # uv dependency-groups (preferred over deprecated tool.uv.dev-dependencies)
+        if self.config.optional_dependencies:
+            content["dependency-groups"] = {}
+            for group_name, group in self.config.optional_dependencies.items():
+                content["dependency-groups"][group_name] = [
+                    dep.to_pep621_string() for dep in group.dependencies
+                ]
+
+        # Tool configurations (do not emit deprecated tool.uv.dev-dependencies)
         if self.config.tool_configs:
-            content["tool"] = self.config.tool_configs
+            # Remove any deprecated uv dev-dependencies if present
+            tool_configs = dict(self.config.tool_configs)
+            if "uv" in tool_configs and isinstance(tool_configs["uv"], dict):
+                tool_configs["uv"].pop("dev-dependencies", None)
+                if not tool_configs["uv"]:
+                    # keep empty table if user expects [tool.uv], else it would be dropped
+                    tool_configs["uv"] = {}
+            content["tool"] = tool_configs
 
         return content
 
@@ -397,15 +412,9 @@ class PyProjectUpdater:
     def _update_tool_configs(self, config: ProjectConfig) -> None:
         """Update tool-specific configurations."""
         if self.options.enable_uv:
+            # No longer write deprecated tool.uv.dev-dependencies; uv reads dependency-groups
             if "uv" not in config.tool_configs:
                 config.tool_configs["uv"] = {}
-
-            # Add dev dependencies to uv config
-            dev_group = config.get_dependency_group(self.options.dev_group_name)
-            if dev_group:
-                config.tool_configs["uv"]["dev-dependencies"] = [
-                    dep.to_pep621_string() for dep in dev_group.dependencies
-                ]
 
         if self.options.enable_hatch:
             if "hatch" not in config.tool_configs:
@@ -475,7 +484,7 @@ class PyProjectUpdater:
                 lines.append(f"[tool.{tool_name}]")
                 for key, value in tool_config.items():
                     if isinstance(value, dict):
-                        lines.append(f"[{tool_name}.{key}]")
+                        lines.append(f"[tool.{tool_name}.{key}]")
                         for sub_key, sub_value in value.items():
                             if isinstance(sub_value, list):
                                 lines.append(f"{sub_key} = {sub_value}")
@@ -486,6 +495,16 @@ class PyProjectUpdater:
                     else:
                         lines.append(f'{key} = "{value}"')
                 lines.append("")
+
+        # Write dependency-groups (uv modern config)
+        if "dependency-groups" in content and content["dependency-groups"]:
+            lines.append("[dependency-groups]")
+            for group_name, deps in content["dependency-groups"].items():
+                lines.append(f"{group_name} = [")
+                for dep in deps:
+                    lines.append(f'    "{dep}",')
+                lines.append("]")
+            lines.append("")
 
         # Write to file
         with open(file_path, "w", encoding="utf-8") as f:
