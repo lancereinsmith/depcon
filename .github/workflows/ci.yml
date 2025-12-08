@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.11", "3.12", "3.13"]
       fail-fast: false
 
     steps:
@@ -29,7 +29,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        uv pip install -e ".[dev,test]"
+        uv sync --group dev --group test
         
     - name: Debug environment
       run: |
@@ -86,7 +86,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        uv pip install -e ".[dev]"
+        uv sync --group dev
 
     - name: Build package
       run: |
@@ -117,7 +117,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        uv pip install -e ".[dev]"
+        uv sync --group dev
 
     - name: Run security checks
       run: |
