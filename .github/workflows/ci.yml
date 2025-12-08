@@ -31,7 +31,7 @@ jobs:
       run: |
         uv run python --version
         uv --version
-        uv run pip list | grep -E "(pytest|coverage|depcon)"
+        uv run pip list
 
     - name: Test package installation
       run: |
