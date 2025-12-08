@@ -1,0 +1,272 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>depcon Documentation &mdash; depcon 0.2.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=37f418d5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Installation" href="installation.html" />
+     
+    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            depcon
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_guide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">depcon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">depcon Documentation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="depcon-documentation">
+<h1>depcon Documentation<a class="headerlink" href="#depcon-documentation" title="Link to this heading"></a></h1>
+<a class="reference external image-reference" href="https://pypi.org/project/depcon/"><img alt="PyPI version" src="https://img.shields.io/pypi/v/depcon.svg" />
+</a>
+<a class="reference external image-reference" href="https://pypi.org/project/depcon/"><img alt="Python versions" src="https://img.shields.io/pypi/pyversions/depcon.svg" />
+</a>
+<a class="reference external image-reference" href="https://github.com/lancereinsmith/depcon/blob/master/LICENSE"><img alt="License" src="https://img.shields.io/github/license/lancereinsmith/depcon.svg" />
+</a>
+<a class="reference external image-reference" href="https://github.com/lancereinsmith/depcon/actions"><img alt="CI Status" src="https://img.shields.io/github/actions/workflow/status/lancereinsmith/depcon/ci.yml" />
+</a>
+<p><code class="docutils literal notranslate"><span class="pre">depcon</span></code> is a modern, fully-featured tool for converting legacy <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code> files to the standardized <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> format with full PEP 621 support. It provides intelligent dependency grouping, validation, and seamless integration with modern Python packaging tools like <code class="docutils literal notranslate"><span class="pre">uv</span></code>, <code class="docutils literal notranslate"><span class="pre">hatchling</span></code>, and <code class="docutils literal notranslate"><span class="pre">setuptools</span></code>.</p>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#using-uv-recommended">Using uv (Recommended)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#using-pipx">Using pipx</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#using-pip">Using pip</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#from-source">From Source</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#verification">Verification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#requirements">Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#optional-dependencies">Optional Dependencies</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#basic-conversion">Basic Conversion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#full-project-migration">Full Project Migration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#viewing-dependencies">Viewing Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#validating-dependencies">Validating Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#example-workflow">Example Workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#next-steps">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="user_guide.html">User Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user_guide.html#commands-overview">Commands Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide.html#convert-command">Convert Command</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide.html#show-command">Show Command</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide.html#validate-command">Validate Command</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide.html#list-command">List Command</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide.html#check-command">Check Command</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide.html#dependency-grouping">Dependency Grouping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide.html#supported-file-formats">Supported File Formats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide.html#build-backends">Build Backends</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide.html#tool-integration">Tool Integration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide.html#advanced-usage">Advanced Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide.html#troubleshooting">Troubleshooting</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_reference.html#models-module">Models Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_reference.html#parsers-module">Parsers Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_reference.html#generators-module">Generators Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_reference.html#cli-module">CLI Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_reference.html#utility-functions">Utility Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_reference.html#exceptions">Exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_reference.html#constants">Constants</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#basic-examples">Basic Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#advanced-examples">Advanced Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#real-world-examples">Real-World Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#cli-examples">CLI Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#integration-examples">Integration Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#ci-cd-integration">CI/CD Integration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#troubleshooting-examples">Troubleshooting Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#best-practices">Best Practices</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#getting-started">Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#development-workflow">Development Workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#code-style">Code Style</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#testing">Testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#pull-request-process">Pull Request Process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#issue-reporting">Issue Reporting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#development-guidelines">Development Guidelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#release-process">Release Process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#getting-help">Getting Help</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#community-guidelines">Community Guidelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#recognition">Recognition</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#unreleased">[Unreleased]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id1">[0.4.1] - 2025-12-08</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id2">[0.4.0] - 2025-12-08</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id4">[0.3.0] - 2025-12-08</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id8">[0.2.1] - 2025-10-15</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id10">[0.2.0] - 2025-10-15</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#x-2024-12-12">[0.1.x] - 2024-12-12</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="features">
+<h2>Features<a class="headerlink" href="#features" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>🔄 Full PEP 621 Support</strong>: Complete support for the modern Python packaging standard</p></li>
+<li><p><strong>📦 Intelligent Dependency Grouping</strong>: Automatically categorizes dependencies into main, dev, test, and docs groups</p></li>
+<li><p><strong>🔍 Advanced Parsing</strong>: Handles complex requirements files including pip-tools, editable installs, and URLs</p></li>
+<li><p><strong>✅ Validation</strong>: Built-in dependency validation and error checking</p></li>
+<li><p><strong>🎯 Multiple Build Backends</strong>: Support for hatchling, setuptools, and poetry</p></li>
+<li><p><strong>🛠️ Tool Integration</strong>: Automatic configuration for uv, hatch, and other modern tools</p></li>
+<li><p><strong>📊 Rich CLI</strong>: Beautiful command-line interface with progress indicators and summaries</p></li>
+<li><p><strong>🔧 Flexible Configuration</strong>: Extensive options for customization and control</p></li>
+</ul>
+</section>
+<section id="quick-start">
+<h2>Quick Start<a class="headerlink" href="#quick-start" title="Link to this heading"></a></h2>
+<p>Install depcon:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Using uv (recommended)</span>
+uv<span class="w"> </span>tool<span class="w"> </span>install<span class="w"> </span>depcon
+
+<span class="c1"># Or using pipx</span>
+pipx<span class="w"> </span>install<span class="w"> </span>depcon
+
+<span class="c1"># Or using pip</span>
+pip<span class="w"> </span>install<span class="w"> </span>depcon
+</pre></div>
+</div>
+<p>Convert your requirements:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Basic conversion</span>
+depcon<span class="w"> </span>convert<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+
+<span class="c1"># Full project migration</span>
+depcon<span class="w"> </span>convert<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-r<span class="w"> </span>requirements.txt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span>requirements-dev.txt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-t<span class="w"> </span>requirements-test.txt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--docs-requirements<span class="w"> </span>requirements-docs.txt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--project-name<span class="w"> </span><span class="s2">&quot;my-awesome-project&quot;</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading"></a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Lance Reinsmith.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        
+            <a href="installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        
+        
+    </div>
+    <hr/>
+    <div role="contentinfo">
+        <p>
+                    &copy; Copyright 2024, Lance Reinsmith.
+                Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3 using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+        </p>
+    </div>
+
+
+</body>
+</html>

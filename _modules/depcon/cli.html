@@ -1,0 +1,1019 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>depcon.cli &mdash; depcon 0.2.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=37f418d5"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+     
+    <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            depcon
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quick Start Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">depcon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">depcon.cli</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for depcon.cli</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Command-line interface for depcon.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">click</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rich.console</span><span class="w"> </span><span class="kn">import</span> <span class="n">Console</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rich.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">Table</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.generators</span><span class="w"> </span><span class="kn">import</span> <span class="n">PyProjectUpdater</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConversionOptions</span><span class="p">,</span> <span class="n">DependencySpec</span><span class="p">,</span> <span class="n">ProjectConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">group_dependencies_by_type</span><span class="p">,</span> <span class="n">parse_requirements_file</span>
+
+<span class="n">console</span> <span class="o">=</span> <span class="n">Console</span><span class="p">()</span>
+
+
+<span class="nd">@click</span><span class="o">.</span><span class="n">group</span><span class="p">()</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">version_option</span><span class="p">(</span><span class="n">version</span><span class="o">=</span><span class="s2">&quot;0.4.1&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert legacy requirements files to modern pyproject.toml format.&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+
+<span class="nd">@main</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;-r&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;--requirements&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;requirements_files&quot;</span><span class="p">,</span>
+    <span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">exists</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">path_type</span><span class="o">=</span><span class="n">Path</span><span class="p">),</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Requirements files to process (requirements.txt, requirements.in)&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;-d&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;--dev-requirements&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;dev_requirements_files&quot;</span><span class="p">,</span>
+    <span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">exists</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">path_type</span><span class="o">=</span><span class="n">Path</span><span class="p">),</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Development requirements files to process&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;-t&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;--test-requirements&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;test_requirements_files&quot;</span><span class="p">,</span>
+    <span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">exists</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">path_type</span><span class="o">=</span><span class="n">Path</span><span class="p">),</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Test requirements files to process&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;--docs-requirements&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;docs_requirements_files&quot;</span><span class="p">,</span>
+    <span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">exists</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">path_type</span><span class="o">=</span><span class="n">Path</span><span class="p">),</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Documentation requirements files to process&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;-o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;--output&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;output_file&quot;</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">path_type</span><span class="o">=</span><span class="n">Path</span><span class="p">),</span>
+    <span class="n">default</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;pyproject.toml&quot;</span><span class="p">),</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Output pyproject.toml file path&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;--append/--no-append&quot;</span><span class="p">,</span>
+    <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Append to existing dependencies instead of replacing&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;--backup/--no-backup&quot;</span><span class="p">,</span>
+    <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Create backup of existing pyproject.toml&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;--resolve/--no-resolve&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Resolve and pin dependency versions&quot;</span>
+<span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;--sort/--no-sort&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Sort dependencies alphabetically&quot;</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;--build-backend&quot;</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Choice</span><span class="p">([</span><span class="s2">&quot;hatchling&quot;</span><span class="p">,</span> <span class="s2">&quot;setuptools&quot;</span><span class="p">,</span> <span class="s2">&quot;poetry&quot;</span><span class="p">]),</span>
+    <span class="n">default</span><span class="o">=</span><span class="s2">&quot;hatchling&quot;</span><span class="p">,</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Build backend to use&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;--dev-group&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;dev&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Name for development dependencies group&quot;</span>
+<span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;--test-group&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Name for test dependencies group&quot;</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;--docs-group&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;docs&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Name for documentation dependencies group&quot;</span>
+<span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;--project-name&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Project name (if creating new pyproject.toml)&quot;</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;--project-version&quot;</span><span class="p">,</span>
+    <span class="n">default</span><span class="o">=</span><span class="s2">&quot;0.1.0&quot;</span><span class="p">,</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Project version (if creating new pyproject.toml)&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;--project-description&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Project description (if creating new pyproject.toml)&quot;</span>
+<span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;--python-version&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;&gt;=3.11&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Python version requirement&quot;</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;--use-optional-deps/--use-dependency-groups&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;use_optional_deps&quot;</span><span class="p">,</span>
+    <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Use optional-dependencies (PEP 621 extras) instead of dependency-groups (PEP 735)&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;--remove-duplicates/--keep-duplicates&quot;</span><span class="p">,</span>
+    <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Remove duplicate dependencies across groups&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;--strict/--no-strict&quot;</span><span class="p">,</span>
+    <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Strict mode: fail on parsing errors instead of warning&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;--verbose&quot;</span><span class="p">,</span> <span class="s2">&quot;-v&quot;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Enable verbose output&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert</span><span class="p">(</span>
+    <span class="n">requirements_files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Path</span><span class="p">],</span>
+    <span class="n">dev_requirements_files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Path</span><span class="p">],</span>
+    <span class="n">test_requirements_files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Path</span><span class="p">],</span>
+    <span class="n">docs_requirements_files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Path</span><span class="p">],</span>
+    <span class="n">output_file</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="n">append</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">backup</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">resolve</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">sort</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">build_backend</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">dev_group</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">test_group</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">docs_group</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">project_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">project_version</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">project_description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">python_version</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">use_optional_deps</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">remove_duplicates</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert requirements files to pyproject.toml format.&quot;&quot;&quot;</span>
+
+    <span class="c1"># Create conversion options</span>
+    <span class="n">options</span> <span class="o">=</span> <span class="n">ConversionOptions</span><span class="p">(</span>
+        <span class="n">requirements_files</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">requirements_files</span><span class="p">),</span>
+        <span class="n">output_file</span><span class="o">=</span><span class="n">output_file</span><span class="p">,</span>
+        <span class="n">append</span><span class="o">=</span><span class="n">append</span><span class="p">,</span>
+        <span class="n">backup</span><span class="o">=</span><span class="n">backup</span><span class="p">,</span>
+        <span class="n">resolve_dependencies</span><span class="o">=</span><span class="n">resolve</span><span class="p">,</span>
+        <span class="n">sort_dependencies</span><span class="o">=</span><span class="n">sort</span><span class="p">,</span>
+        <span class="n">build_backend</span><span class="o">=</span><span class="n">build_backend</span><span class="p">,</span>
+        <span class="n">dev_group_name</span><span class="o">=</span><span class="n">dev_group</span><span class="p">,</span>
+        <span class="n">test_group_name</span><span class="o">=</span><span class="n">test_group</span><span class="p">,</span>
+        <span class="n">docs_group_name</span><span class="o">=</span><span class="n">docs_group</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Set build requirements based on backend</span>
+    <span class="k">if</span> <span class="n">build_backend</span> <span class="o">==</span> <span class="s2">&quot;hatchling&quot;</span><span class="p">:</span>
+        <span class="n">options</span><span class="o">.</span><span class="n">build_requires</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;hatchling&quot;</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">build_backend</span> <span class="o">==</span> <span class="s2">&quot;setuptools&quot;</span><span class="p">:</span>
+        <span class="n">options</span><span class="o">.</span><span class="n">build_requires</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;setuptools&quot;</span><span class="p">,</span> <span class="s2">&quot;wheel&quot;</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">build_backend</span> <span class="o">==</span> <span class="s2">&quot;poetry&quot;</span><span class="p">:</span>
+        <span class="n">options</span><span class="o">.</span><span class="n">build_requires</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;poetry-core&quot;</span><span class="p">]</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Parse all requirements files</span>
+        <span class="n">all_dependencies</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">req_file</span> <span class="ow">in</span> <span class="n">requirements_files</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Parsing </span><span class="si">{</span><span class="n">req_file</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+            <span class="n">deps</span> <span class="o">=</span> <span class="n">parse_requirements_file</span><span class="p">(</span><span class="n">req_file</span><span class="p">)</span>
+            <span class="n">all_dependencies</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">deps</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">req_file</span> <span class="ow">in</span> <span class="n">dev_requirements_files</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Parsing dev requirements </span><span class="si">{</span><span class="n">req_file</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+            <span class="n">deps</span> <span class="o">=</span> <span class="n">parse_requirements_file</span><span class="p">(</span><span class="n">req_file</span><span class="p">)</span>
+            <span class="n">all_dependencies</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">deps</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">req_file</span> <span class="ow">in</span> <span class="n">test_requirements_files</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Parsing test requirements </span><span class="si">{</span><span class="n">req_file</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+            <span class="n">deps</span> <span class="o">=</span> <span class="n">parse_requirements_file</span><span class="p">(</span><span class="n">req_file</span><span class="p">)</span>
+            <span class="n">all_dependencies</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">deps</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">req_file</span> <span class="ow">in</span> <span class="n">docs_requirements_files</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Parsing docs requirements </span><span class="si">{</span><span class="n">req_file</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+            <span class="n">deps</span> <span class="o">=</span> <span class="n">parse_requirements_file</span><span class="p">(</span><span class="n">req_file</span><span class="p">)</span>
+            <span class="n">all_dependencies</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">deps</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">all_dependencies</span><span class="p">:</span>
+            <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;[yellow]No dependencies found in input files.[/yellow]&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="c1"># Group dependencies by type</span>
+        <span class="n">grouped_deps</span> <span class="o">=</span> <span class="n">group_dependencies_by_type</span><span class="p">(</span><span class="n">all_dependencies</span><span class="p">)</span>
+
+        <span class="c1"># Remove duplicates if requested</span>
+        <span class="k">if</span> <span class="n">remove_duplicates</span><span class="p">:</span>
+            <span class="n">_remove_duplicate_dependencies</span><span class="p">(</span><span class="n">grouped_deps</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">_print_dependency_summary</span><span class="p">(</span><span class="n">grouped_deps</span><span class="p">)</span>
+
+        <span class="c1"># Create or update pyproject.toml</span>
+        <span class="n">updater</span> <span class="o">=</span> <span class="n">PyProjectUpdater</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+
+        <span class="c1"># Set project metadata if provided</span>
+        <span class="k">if</span> <span class="n">project_name</span> <span class="ow">or</span> <span class="n">project_description</span><span class="p">:</span>
+            <span class="n">config</span> <span class="o">=</span> <span class="n">updater</span><span class="o">.</span><span class="n">_load_existing_config</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">project_name</span><span class="p">:</span>
+                <span class="n">config</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">project_name</span>
+            <span class="k">if</span> <span class="n">project_description</span><span class="p">:</span>
+                <span class="n">config</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">project_description</span>
+            <span class="n">config</span><span class="o">.</span><span class="n">version</span> <span class="o">=</span> <span class="n">project_version</span>
+            <span class="n">config</span><span class="o">.</span><span class="n">requires_python</span> <span class="o">=</span> <span class="n">python_version</span>
+
+        <span class="c1"># Determine whether to use dependency-groups or optional-dependencies</span>
+        <span class="n">use_dependency_groups</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">use_optional_deps</span>
+
+        <span class="n">updater</span><span class="o">.</span><span class="n">update_with_dependencies</span><span class="p">(</span>
+            <span class="n">main_deps</span><span class="o">=</span><span class="n">grouped_deps</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;main&quot;</span><span class="p">,</span> <span class="p">[]),</span>
+            <span class="n">dev_deps</span><span class="o">=</span><span class="n">grouped_deps</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dev&quot;</span><span class="p">,</span> <span class="p">[]),</span>
+            <span class="n">test_deps</span><span class="o">=</span><span class="n">grouped_deps</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="p">[]),</span>
+            <span class="n">docs_deps</span><span class="o">=</span><span class="n">grouped_deps</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;docs&quot;</span><span class="p">,</span> <span class="p">[]),</span>
+            <span class="n">use_dependency_groups</span><span class="o">=</span><span class="n">use_dependency_groups</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[green]Successfully updated </span><span class="si">{</span><span class="n">output_file</span><span class="si">}</span><span class="s2">[/green]&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">backup</span> <span class="ow">and</span> <span class="n">output_file</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">backup_file</span> <span class="o">=</span> <span class="n">output_file</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s2">&quot;.toml.backup&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">backup_file</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[blue]Backup created: </span><span class="si">{</span><span class="n">backup_file</span><span class="si">}</span><span class="s2">[/blue]&quot;</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[red]Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">[/red]&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">traceback</span>
+
+            <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+
+<span class="nd">@main</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;-f&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;--file&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;pyproject_file&quot;</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">exists</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">path_type</span><span class="o">=</span><span class="n">Path</span><span class="p">),</span>
+    <span class="n">default</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;pyproject.toml&quot;</span><span class="p">),</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Path to pyproject.toml file&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;--format&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;output_format&quot;</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Choice</span><span class="p">([</span><span class="s2">&quot;table&quot;</span><span class="p">,</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span> <span class="s2">&quot;yaml&quot;</span><span class="p">]),</span>
+    <span class="n">default</span><span class="o">=</span><span class="s2">&quot;table&quot;</span><span class="p">,</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Output format&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;--group&quot;</span><span class="p">,</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Show only specific dependency group (main, dev, test, docs, or optional group name)&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">show</span><span class="p">(</span><span class="n">pyproject_file</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">output_format</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">group</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Show dependencies from pyproject.toml file.&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">updater</span> <span class="o">=</span> <span class="n">PyProjectUpdater</span><span class="p">(</span><span class="n">pyproject_file</span><span class="p">,</span> <span class="n">ConversionOptions</span><span class="p">())</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">updater</span><span class="o">.</span><span class="n">_load_existing_config</span><span class="p">()</span>
+
+        <span class="c1"># Filter by group if specified</span>
+        <span class="k">if</span> <span class="n">group</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">group</span> <span class="o">==</span> <span class="s2">&quot;main&quot;</span><span class="p">:</span>
+                <span class="n">config</span><span class="o">.</span><span class="n">dependencies</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">dependencies</span>
+                <span class="n">config</span><span class="o">.</span><span class="n">optional_dependencies</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="n">config</span><span class="o">.</span><span class="n">dependency_groups</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">elif</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">optional_dependencies</span><span class="p">:</span>
+                <span class="n">config</span><span class="o">.</span><span class="n">dependencies</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">config</span><span class="o">.</span><span class="n">dependency_groups</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="c1"># Keep only the specified optional dependency group</span>
+                <span class="n">filtered_optional</span> <span class="o">=</span> <span class="p">{</span><span class="n">group</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">optional_dependencies</span><span class="p">[</span><span class="n">group</span><span class="p">]}</span>
+                <span class="n">config</span><span class="o">.</span><span class="n">optional_dependencies</span> <span class="o">=</span> <span class="n">filtered_optional</span>
+            <span class="k">elif</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">dependency_groups</span><span class="p">:</span>
+                <span class="n">config</span><span class="o">.</span><span class="n">dependencies</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">config</span><span class="o">.</span><span class="n">optional_dependencies</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="c1"># Keep only the specified dependency group</span>
+                <span class="n">filtered_groups</span> <span class="o">=</span> <span class="p">{</span><span class="n">group</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">dependency_groups</span><span class="p">[</span><span class="n">group</span><span class="p">]}</span>
+                <span class="n">config</span><span class="o">.</span><span class="n">dependency_groups</span> <span class="o">=</span> <span class="n">filtered_groups</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[yellow]Group &#39;</span><span class="si">{</span><span class="n">group</span><span class="si">}</span><span class="s2">&#39; not found[/yellow]&quot;</span><span class="p">)</span>
+                <span class="k">return</span>
+
+        <span class="k">if</span> <span class="n">output_format</span> <span class="o">==</span> <span class="s2">&quot;table&quot;</span><span class="p">:</span>
+            <span class="n">_print_dependencies_table</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">output_format</span> <span class="o">==</span> <span class="s2">&quot;json&quot;</span><span class="p">:</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+            <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;dependencies&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">dep</span><span class="o">.</span><span class="n">to_pep621_string</span><span class="p">()</span> <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">dependencies</span><span class="p">],</span>
+                <span class="s2">&quot;optional_dependencies&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="n">name</span><span class="p">:</span> <span class="p">[</span><span class="n">dep</span><span class="o">.</span><span class="n">to_pep621_string</span><span class="p">()</span> <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">group</span><span class="o">.</span><span class="n">dependencies</span><span class="p">]</span>
+                    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">optional_dependencies</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                <span class="p">},</span>
+                <span class="s2">&quot;dependency_groups&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="n">name</span><span class="p">:</span> <span class="p">[</span><span class="n">dep</span><span class="o">.</span><span class="n">to_pep621_string</span><span class="p">()</span> <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">group</span><span class="o">.</span><span class="n">dependencies</span><span class="p">]</span>
+                    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">dependency_groups</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                <span class="p">},</span>
+            <span class="p">}</span>
+            <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">output_format</span> <span class="o">==</span> <span class="s2">&quot;yaml&quot;</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
+            <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+                <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span>
+                    <span class="s2">&quot;[red]yaml format requires PyYAML. Install with: pip install pyyaml[/red]&quot;</span>
+                <span class="p">)</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;dependencies&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">dep</span><span class="o">.</span><span class="n">to_pep621_string</span><span class="p">()</span> <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">dependencies</span><span class="p">],</span>
+                <span class="s2">&quot;optional_dependencies&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="n">name</span><span class="p">:</span> <span class="p">[</span><span class="n">dep</span><span class="o">.</span><span class="n">to_pep621_string</span><span class="p">()</span> <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">group</span><span class="o">.</span><span class="n">dependencies</span><span class="p">]</span>
+                    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">optional_dependencies</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                <span class="p">},</span>
+                <span class="s2">&quot;dependency_groups&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="n">name</span><span class="p">:</span> <span class="p">[</span><span class="n">dep</span><span class="o">.</span><span class="n">to_pep621_string</span><span class="p">()</span> <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">group</span><span class="o">.</span><span class="n">dependencies</span><span class="p">]</span>
+                    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">dependency_groups</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                <span class="p">},</span>
+            <span class="p">}</span>
+            <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">default_flow_style</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[red]Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">[/red]&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+
+<span class="nd">@main</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;-f&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;--file&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;pyproject_file&quot;</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">exists</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">path_type</span><span class="o">=</span><span class="n">Path</span><span class="p">),</span>
+    <span class="n">default</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;pyproject.toml&quot;</span><span class="p">),</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Path to pyproject.toml file&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;--group&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Dependency group to validate (main, dev, test, docs)&quot;</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;--check-pypi/--no-check-pypi&quot;</span><span class="p">,</span>
+    <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Check if packages exist on PyPI&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="n">pyproject_file</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">group</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">check_pypi</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate pyproject.toml dependencies.&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">updater</span> <span class="o">=</span> <span class="n">PyProjectUpdater</span><span class="p">(</span><span class="n">pyproject_file</span><span class="p">,</span> <span class="n">ConversionOptions</span><span class="p">())</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">updater</span><span class="o">.</span><span class="n">_load_existing_config</span><span class="p">()</span>
+
+        <span class="n">errors</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">warnings</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Validate main dependencies</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">group</span> <span class="ow">or</span> <span class="n">group</span> <span class="o">==</span> <span class="s2">&quot;main&quot;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">dependencies</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">_validate_dependency</span><span class="p">(</span><span class="n">dep</span><span class="p">):</span>
+                    <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid dependency: </span><span class="si">{</span><span class="n">dep</span><span class="o">.</span><span class="n">to_pep621_string</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Validate optional dependencies</span>
+        <span class="k">for</span> <span class="n">group_name</span><span class="p">,</span> <span class="n">group_deps</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">optional_dependencies</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">group</span> <span class="ow">or</span> <span class="n">group</span> <span class="o">==</span> <span class="n">group_name</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">group_deps</span><span class="o">.</span><span class="n">dependencies</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">_validate_dependency</span><span class="p">(</span><span class="n">dep</span><span class="p">):</span>
+                        <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;Invalid dependency in optional-dependencies.</span><span class="si">{</span><span class="n">group_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">dep</span><span class="o">.</span><span class="n">to_pep621_string</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="p">)</span>
+
+        <span class="c1"># Validate dependency groups</span>
+        <span class="k">for</span> <span class="n">group_name</span><span class="p">,</span> <span class="n">group_deps</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">dependency_groups</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">group</span> <span class="ow">or</span> <span class="n">group</span> <span class="o">==</span> <span class="n">group_name</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">group_deps</span><span class="o">.</span><span class="n">dependencies</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">_validate_dependency</span><span class="p">(</span><span class="n">dep</span><span class="p">):</span>
+                        <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;Invalid dependency in dependency-groups.</span><span class="si">{</span><span class="n">group_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">dep</span><span class="o">.</span><span class="n">to_pep621_string</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">errors</span><span class="p">:</span>
+            <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;[red]Validation errors:[/red]&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">error</span> <span class="ow">in</span> <span class="n">errors</span><span class="p">:</span>
+                <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - </span><span class="si">{</span><span class="n">error</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">warnings</span><span class="p">:</span>
+            <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;[yellow]Validation warnings:[/yellow]&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">warning</span> <span class="ow">in</span> <span class="n">warnings</span><span class="p">:</span>
+                <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - </span><span class="si">{</span><span class="n">warning</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">check_pypi</span><span class="p">:</span>
+            <span class="n">_check_pypi_availability</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">group</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">errors</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">warnings</span><span class="p">:</span>
+            <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;[green]All dependencies are valid![/green]&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[red]Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">[/red]&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+
+<span class="nd">@main</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;list&quot;</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;-f&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;--file&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;pyproject_file&quot;</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">exists</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">path_type</span><span class="o">=</span><span class="n">Path</span><span class="p">),</span>
+    <span class="n">default</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;pyproject.toml&quot;</span><span class="p">),</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Path to pyproject.toml file&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">list_groups</span><span class="p">(</span><span class="n">pyproject_file</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;List all dependency groups in pyproject.toml.&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">updater</span> <span class="o">=</span> <span class="n">PyProjectUpdater</span><span class="p">(</span><span class="n">pyproject_file</span><span class="p">,</span> <span class="n">ConversionOptions</span><span class="p">())</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">updater</span><span class="o">.</span><span class="n">_load_existing_config</span><span class="p">()</span>
+
+        <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Dependency Groups&quot;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Type&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Group Name&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;magenta&quot;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Count&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">dependencies</span><span class="p">:</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Main&quot;</span><span class="p">,</span> <span class="s2">&quot;dependencies&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">dependencies</span><span class="p">)))</span>
+
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">optional_dependencies</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Optional (PEP 621)&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">group</span><span class="o">.</span><span class="n">dependencies</span><span class="p">)))</span>
+
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">dependency_groups</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Group (PEP 735)&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">group</span><span class="o">.</span><span class="n">dependencies</span><span class="p">)))</span>
+
+        <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[red]Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">[/red]&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+
+<span class="nd">@main</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;-f&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;--file&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;pyproject_file&quot;</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">exists</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">path_type</span><span class="o">=</span><span class="n">Path</span><span class="p">),</span>
+    <span class="n">default</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;pyproject.toml&quot;</span><span class="p">),</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Path to pyproject.toml file&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;--check-duplicates/--no-check-duplicates&quot;</span><span class="p">,</span>
+    <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Check for duplicate dependencies&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;--check-missing/--no-check-missing&quot;</span><span class="p">,</span>
+    <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Check for missing optional dependencies&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check</span><span class="p">(</span><span class="n">pyproject_file</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">check_duplicates</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">check_missing</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check pyproject.toml for common issues.&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">updater</span> <span class="o">=</span> <span class="n">PyProjectUpdater</span><span class="p">(</span><span class="n">pyproject_file</span><span class="p">,</span> <span class="n">ConversionOptions</span><span class="p">())</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">updater</span><span class="o">.</span><span class="n">_load_existing_config</span><span class="p">()</span>
+
+        <span class="n">issues</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">warnings</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="n">check_duplicates</span><span class="p">:</span>
+            <span class="c1"># Check for duplicates across groups</span>
+            <span class="n">all_dep_names</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">dependencies</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">dep</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">all_dep_names</span><span class="p">:</span>
+                    <span class="n">issues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Duplicate dependency &#39;</span><span class="si">{</span><span class="n">dep</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; found in main dependencies and </span><span class="si">{</span><span class="n">all_dep_names</span><span class="p">[</span><span class="n">dep</span><span class="o">.</span><span class="n">name</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+                <span class="n">all_dep_names</span><span class="p">[</span><span class="n">dep</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;main dependencies&quot;</span>
+
+            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">optional_dependencies</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">group</span><span class="o">.</span><span class="n">dependencies</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">dep</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">all_dep_names</span><span class="p">:</span>
+                        <span class="n">issues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;Duplicate dependency &#39;</span><span class="si">{</span><span class="n">dep</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; found in optional-dependencies.</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">all_dep_names</span><span class="p">[</span><span class="n">dep</span><span class="o">.</span><span class="n">name</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="p">)</span>
+                    <span class="n">all_dep_names</span><span class="p">[</span><span class="n">dep</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;optional-dependencies.</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
+
+            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">dependency_groups</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">group</span><span class="o">.</span><span class="n">dependencies</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">dep</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">all_dep_names</span><span class="p">:</span>
+                        <span class="n">warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;Duplicate dependency &#39;</span><span class="si">{</span><span class="n">dep</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; found in dependency-groups.</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">all_dep_names</span><span class="p">[</span><span class="n">dep</span><span class="o">.</span><span class="n">name</span><span class="p">]</span><span class="si">}</span><span class="s2"> (this may be intentional)&quot;</span>
+                        <span class="p">)</span>
+                    <span class="n">all_dep_names</span><span class="p">[</span><span class="n">dep</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;dependency-groups.</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="k">if</span> <span class="n">check_missing</span><span class="p">:</span>
+            <span class="c1"># Check if optional dependencies reference missing main dependencies</span>
+            <span class="n">main_dep_names</span> <span class="o">=</span> <span class="p">{</span><span class="n">dep</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">dependencies</span><span class="p">}</span>
+            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">optional_dependencies</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">group</span><span class="o">.</span><span class="n">dependencies</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">dep</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">main_dep_names</span><span class="p">:</span>
+                        <span class="c1"># This is fine, just a note</span>
+                        <span class="k">pass</span>
+
+        <span class="k">if</span> <span class="n">issues</span><span class="p">:</span>
+            <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;[red]Issues found:[/red]&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">issue</span> <span class="ow">in</span> <span class="n">issues</span><span class="p">:</span>
+                <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - </span><span class="si">{</span><span class="n">issue</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">warnings</span><span class="p">:</span>
+            <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;[yellow]Warnings:[/yellow]&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">warning</span> <span class="ow">in</span> <span class="n">warnings</span><span class="p">:</span>
+                <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - </span><span class="si">{</span><span class="n">warning</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">issues</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">warnings</span><span class="p">:</span>
+            <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;[green]No issues found![/green]&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">issues</span><span class="p">:</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[red]Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">[/red]&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_check_pypi_availability</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="n">ProjectConfig</span><span class="p">,</span> <span class="n">group</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if packages are available on PyPI.&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">urllib.request</span>
+
+        <span class="n">packages_to_check</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">group</span> <span class="ow">or</span> <span class="n">group</span> <span class="o">==</span> <span class="s2">&quot;main&quot;</span><span class="p">:</span>
+            <span class="n">packages_to_check</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">dep</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">dependencies</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">group</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">group_deps</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">optional_dependencies</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="n">packages_to_check</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">dep</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">group_deps</span><span class="o">.</span><span class="n">dependencies</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">group_deps</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">dependency_groups</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="n">packages_to_check</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">dep</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">group_deps</span><span class="o">.</span><span class="n">dependencies</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">optional_dependencies</span><span class="p">:</span>
+            <span class="n">packages_to_check</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">dep</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">optional_dependencies</span><span class="p">[</span><span class="n">group</span><span class="p">]</span><span class="o">.</span><span class="n">dependencies</span><span class="p">]</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">dependency_groups</span><span class="p">:</span>
+            <span class="n">packages_to_check</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">dep</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">dependency_groups</span><span class="p">[</span><span class="n">group</span><span class="p">]</span><span class="o">.</span><span class="n">dependencies</span><span class="p">]</span>
+            <span class="p">)</span>
+
+        <span class="n">unavailable</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">package</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">packages_to_check</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://pypi.org/pypi/</span><span class="si">{</span><span class="n">package</span><span class="si">}</span><span class="s2">/json&quot;</span>
+                <span class="k">with</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span> <span class="k">as</span> <span class="n">response</span><span class="p">:</span>
+                    <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="n">unavailable</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">package</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">unavailable</span><span class="p">:</span>
+            <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;[yellow]Packages not found on PyPI:[/yellow]&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">package</span> <span class="ow">in</span> <span class="n">unavailable</span><span class="p">:</span>
+                <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - </span><span class="si">{</span><span class="n">package</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span>
+            <span class="s2">&quot;[yellow]PyPI check requires urllib (built-in) or requests[/yellow]&quot;</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[yellow]Could not check PyPI availability: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">[/yellow]&quot;</span><span class="p">)</span>
+
+
+<span class="nd">@main</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;-f&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;--file&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;pyproject_file&quot;</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">exists</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">path_type</span><span class="o">=</span><span class="n">Path</span><span class="p">),</span>
+    <span class="n">default</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;pyproject.toml&quot;</span><span class="p">),</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Path to pyproject.toml file&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;-o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;--output&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;output_file&quot;</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">path_type</span><span class="o">=</span><span class="n">Path</span><span class="p">),</span>
+    <span class="n">default</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;requirements.txt&quot;</span><span class="p">),</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Output requirements.txt file path&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;--group&quot;</span><span class="p">,</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Dependency group to export (main, dev, test, docs, or all)&quot;</span><span class="p">,</span>
+    <span class="n">default</span><span class="o">=</span><span class="s2">&quot;main&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;--include-hashes&quot;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Include package hashes&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">export</span><span class="p">(</span><span class="n">pyproject_file</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">output_file</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">group</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">include_hashes</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Export dependencies from pyproject.toml to requirements.txt format.&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">updater</span> <span class="o">=</span> <span class="n">PyProjectUpdater</span><span class="p">(</span><span class="n">pyproject_file</span><span class="p">,</span> <span class="n">ConversionOptions</span><span class="p">())</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">updater</span><span class="o">.</span><span class="n">_load_existing_config</span><span class="p">()</span>
+
+        <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">group</span> <span class="o">==</span> <span class="s2">&quot;main&quot;</span> <span class="ow">or</span> <span class="n">group</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
+            <span class="n">dependencies</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">dependencies</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">group</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">group_name</span><span class="p">,</span> <span class="n">group_deps</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">optional_dependencies</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">dependencies</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">group_deps</span><span class="o">.</span><span class="n">dependencies</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">group_name</span><span class="p">,</span> <span class="n">group_deps</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">dependency_groups</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">dependencies</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">group_deps</span><span class="o">.</span><span class="n">dependencies</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">optional_dependencies</span><span class="p">:</span>
+            <span class="n">dependencies</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">optional_dependencies</span><span class="p">[</span><span class="n">group</span><span class="p">]</span><span class="o">.</span><span class="n">dependencies</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">dependency_groups</span><span class="p">:</span>
+            <span class="n">dependencies</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">dependency_groups</span><span class="p">[</span><span class="n">group</span><span class="p">]</span><span class="o">.</span><span class="n">dependencies</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">dependencies</span><span class="p">:</span>
+            <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[yellow]No dependencies found for group: </span><span class="si">{</span><span class="n">group</span><span class="si">}</span><span class="s2">[/yellow]&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="c1"># Write to requirements.txt</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">dependencies</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">d</span><span class="o">.</span><span class="n">name</span><span class="p">):</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">dep</span><span class="o">.</span><span class="n">to_string</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;[green]Exported </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">dependencies</span><span class="p">)</span><span class="si">}</span><span class="s2"> dependencies to </span><span class="si">{</span><span class="n">output_file</span><span class="si">}</span><span class="s2">[/green]&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[red]Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">[/red]&quot;</span><span class="p">)</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">traceback</span>
+
+        <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+
+<span class="nd">@main</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;-f&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;--file&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;pyproject_file&quot;</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">exists</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">path_type</span><span class="o">=</span><span class="n">Path</span><span class="p">),</span>
+    <span class="n">default</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;pyproject.toml&quot;</span><span class="p">),</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Path to pyproject.toml file&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;-r&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;--requirements&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;requirements_file&quot;</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">exists</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">path_type</span><span class="o">=</span><span class="n">Path</span><span class="p">),</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Path to requirements.txt file to compare&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;--group&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Dependency group to compare (main, dev, test, docs)&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">diff</span><span class="p">(</span><span class="n">pyproject_file</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">requirements_file</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">],</span> <span class="n">group</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Show differences between pyproject.toml and requirements files.&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">rich.diff</span><span class="w"> </span><span class="kn">import</span> <span class="n">Diff</span>
+        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+            <span class="c1"># Fallback if rich.diff is not available</span>
+            <span class="n">Diff</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">updater</span> <span class="o">=</span> <span class="n">PyProjectUpdater</span><span class="p">(</span><span class="n">pyproject_file</span><span class="p">,</span> <span class="n">ConversionOptions</span><span class="p">())</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">updater</span><span class="o">.</span><span class="n">_load_existing_config</span><span class="p">()</span>
+
+        <span class="c1"># Get dependencies from pyproject.toml</span>
+        <span class="n">pyproject_deps</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">group</span> <span class="ow">or</span> <span class="n">group</span> <span class="o">==</span> <span class="s2">&quot;main&quot;</span><span class="p">:</span>
+            <span class="n">pyproject_deps</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">dependencies</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">group</span> <span class="ow">or</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">optional_dependencies</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">optional_dependencies</span><span class="p">:</span>
+                <span class="n">pyproject_deps</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">optional_dependencies</span><span class="p">[</span><span class="n">group</span><span class="p">]</span><span class="o">.</span><span class="n">dependencies</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">group</span> <span class="ow">or</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">dependency_groups</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">dependency_groups</span><span class="p">:</span>
+                <span class="n">pyproject_deps</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">dependency_groups</span><span class="p">[</span><span class="n">group</span><span class="p">]</span><span class="o">.</span><span class="n">dependencies</span><span class="p">)</span>
+
+        <span class="n">pyproject_lines</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">dep</span><span class="o">.</span><span class="n">to_string</span><span class="p">()</span> <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">pyproject_deps</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">requirements_file</span><span class="p">:</span>
+            <span class="c1"># Get dependencies from requirements file</span>
+            <span class="n">req_deps</span> <span class="o">=</span> <span class="n">parse_requirements_file</span><span class="p">(</span><span class="n">requirements_file</span><span class="p">)</span>
+            <span class="n">req_lines</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">dep</span><span class="o">.</span><span class="n">to_string</span><span class="p">()</span> <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">req_deps</span><span class="p">])</span>
+
+            <span class="c1"># Show diff</span>
+            <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;[bold]Differences:[/bold]&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">Diff</span><span class="p">:</span>
+                <span class="n">diff</span> <span class="o">=</span> <span class="n">Diff</span><span class="p">(</span><span class="n">pyproject_lines</span><span class="p">,</span> <span class="n">req_lines</span><span class="p">)</span>
+                <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Simple text diff</span>
+                <span class="n">only_in_pyproject</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">pyproject_lines</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">req_lines</span><span class="p">)</span>
+                <span class="n">only_in_req</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">req_lines</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">pyproject_lines</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">only_in_pyproject</span><span class="p">:</span>
+                    <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;[green]Only in pyproject.toml:[/green]&quot;</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">only_in_pyproject</span><span class="p">):</span>
+                        <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  + </span><span class="si">{</span><span class="n">line</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">only_in_req</span><span class="p">:</span>
+                    <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;[red]Only in requirements.txt:[/red]&quot;</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">only_in_req</span><span class="p">):</span>
+                        <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - </span><span class="si">{</span><span class="n">line</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">only_in_pyproject</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">only_in_req</span><span class="p">:</span>
+                    <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;[green]No differences found[/green]&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Just show pyproject.toml dependencies</span>
+            <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;[bold]Dependencies in pyproject.toml:[/bold]&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">pyproject_lines</span><span class="p">:</span>
+                <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">line</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[red]Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">[/red]&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+
+<span class="nd">@main</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;-f&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;--file&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;pyproject_file&quot;</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">exists</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">path_type</span><span class="o">=</span><span class="n">Path</span><span class="p">),</span>
+    <span class="n">default</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;pyproject.toml&quot;</span><span class="p">),</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Path to pyproject.toml file&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;--group&quot;</span><span class="p">,</span>
+    <span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Dependency groups to sync (default: all)&quot;</span><span class="p">,</span>
+    <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;main&quot;</span><span class="p">,</span> <span class="s2">&quot;dev&quot;</span><span class="p">,</span> <span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="s2">&quot;docs&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;--dry-run&quot;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Show what would be synced without making changes&quot;</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">sync</span><span class="p">(</span><span class="n">pyproject_file</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">group</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">dry_run</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sync dependencies from pyproject.toml to requirements files.&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">updater</span> <span class="o">=</span> <span class="n">PyProjectUpdater</span><span class="p">(</span><span class="n">pyproject_file</span><span class="p">,</span> <span class="n">ConversionOptions</span><span class="p">())</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">updater</span><span class="o">.</span><span class="n">_load_existing_config</span><span class="p">()</span>
+
+        <span class="n">group_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">group</span><span class="p">)</span> <span class="k">if</span> <span class="n">group</span> <span class="k">else</span> <span class="p">[</span><span class="s2">&quot;main&quot;</span><span class="p">,</span> <span class="s2">&quot;dev&quot;</span><span class="p">,</span> <span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="s2">&quot;docs&quot;</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">grp</span> <span class="ow">in</span> <span class="n">group_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">grp</span> <span class="o">==</span> <span class="s2">&quot;main&quot;</span><span class="p">:</span>
+                <span class="n">deps</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">dependencies</span>
+                <span class="n">output_file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;requirements.txt&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">grp</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">optional_dependencies</span><span class="p">:</span>
+                <span class="n">deps</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">optional_dependencies</span><span class="p">[</span><span class="n">grp</span><span class="p">]</span><span class="o">.</span><span class="n">dependencies</span>
+                <span class="n">output_file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;requirements-</span><span class="si">{</span><span class="n">grp</span><span class="si">}</span><span class="s2">.txt&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">grp</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">dependency_groups</span><span class="p">:</span>
+                <span class="n">deps</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">dependency_groups</span><span class="p">[</span><span class="n">grp</span><span class="p">]</span><span class="o">.</span><span class="n">dependencies</span>
+                <span class="n">output_file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;requirements-</span><span class="si">{</span><span class="n">grp</span><span class="si">}</span><span class="s2">.txt&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[yellow]Group &#39;</span><span class="si">{</span><span class="n">grp</span><span class="si">}</span><span class="s2">&#39; not found, skipping[/yellow]&quot;</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">deps</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="n">dry_run</span><span class="p">:</span>
+                <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;[cyan]Would sync </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">deps</span><span class="p">)</span><span class="si">}</span><span class="s2"> dependencies to </span><span class="si">{</span><span class="n">output_file</span><span class="si">}</span><span class="s2">[/cyan]&quot;</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">deps</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">d</span><span class="o">.</span><span class="n">name</span><span class="p">):</span>
+                    <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">dep</span><span class="o">.</span><span class="n">to_string</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">deps</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">d</span><span class="o">.</span><span class="n">name</span><span class="p">):</span>
+                        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">dep</span><span class="o">.</span><span class="n">to_string</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;[green]Synced </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">deps</span><span class="p">)</span><span class="si">}</span><span class="s2"> dependencies to </span><span class="si">{</span><span class="n">output_file</span><span class="si">}</span><span class="s2">[/green]&quot;</span>
+                <span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[red]Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">[/red]&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="_print_dependency_summary">
+<a class="viewcode-back" href="../../api_reference.html#depcon.cli._print_dependency_summary">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">_print_dependency_summary</span><span class="p">(</span><span class="n">grouped_deps</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">DependencySpec</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Print a summary of grouped dependencies.&quot;&quot;&quot;</span>
+    <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Dependency Summary&quot;</span><span class="p">)</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Group&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">)</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Count&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;magenta&quot;</span><span class="p">)</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Dependencies&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">group_name</span><span class="p">,</span> <span class="n">deps</span> <span class="ow">in</span> <span class="n">grouped_deps</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">deps</span><span class="p">:</span>
+            <span class="n">dep_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">dep</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">deps</span><span class="p">[:</span><span class="mi">5</span><span class="p">]]</span>  <span class="c1"># Show first 5</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">deps</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">:</span>
+                <span class="n">dep_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;... and </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">deps</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">5</span><span class="si">}</span><span class="s2"> more&quot;</span><span class="p">)</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="n">group_name</span><span class="o">.</span><span class="n">title</span><span class="p">(),</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">deps</span><span class="p">)),</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dep_names</span><span class="p">))</span>
+
+    <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">table</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="_print_dependencies_table">
+<a class="viewcode-back" href="../../api_reference.html#depcon.cli._print_dependencies_table">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">_print_dependencies_table</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="n">ProjectConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Print dependencies in a table format.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">dependencies</span><span class="p">:</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Main Dependencies&quot;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Package&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Version&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;magenta&quot;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Extras&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">dependencies</span><span class="p">:</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span>
+                <span class="n">dep</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dep</span><span class="o">.</span><span class="n">version_specs</span><span class="p">)</span> <span class="k">if</span> <span class="n">dep</span><span class="o">.</span><span class="n">version_specs</span> <span class="k">else</span> <span class="s2">&quot;latest&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dep</span><span class="o">.</span><span class="n">extras</span><span class="p">)</span> <span class="k">if</span> <span class="n">dep</span><span class="o">.</span><span class="n">extras</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">group_name</span><span class="p">,</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">optional_dependencies</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">group</span><span class="o">.</span><span class="n">dependencies</span><span class="p">:</span>
+            <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Optional Dependencies: </span><span class="si">{</span><span class="n">group_name</span><span class="o">.</span><span class="n">title</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Package&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">)</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Version&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;magenta&quot;</span><span class="p">)</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Extras&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">group</span><span class="o">.</span><span class="n">dependencies</span><span class="p">:</span>
+                <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span>
+                    <span class="n">dep</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                    <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dep</span><span class="o">.</span><span class="n">version_specs</span><span class="p">)</span> <span class="k">if</span> <span class="n">dep</span><span class="o">.</span><span class="n">version_specs</span> <span class="k">else</span> <span class="s2">&quot;latest&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dep</span><span class="o">.</span><span class="n">extras</span><span class="p">)</span> <span class="k">if</span> <span class="n">dep</span><span class="o">.</span><span class="n">extras</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">group_name</span><span class="p">,</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">dependency_groups</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">group</span><span class="o">.</span><span class="n">dependencies</span><span class="p">:</span>
+            <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Dependency Group: </span><span class="si">{</span><span class="n">group_name</span><span class="o">.</span><span class="n">title</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Package&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">)</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Version&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;magenta&quot;</span><span class="p">)</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Extras&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">group</span><span class="o">.</span><span class="n">dependencies</span><span class="p">:</span>
+                <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span>
+                    <span class="n">dep</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                    <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dep</span><span class="o">.</span><span class="n">version_specs</span><span class="p">)</span> <span class="k">if</span> <span class="n">dep</span><span class="o">.</span><span class="n">version_specs</span> <span class="k">else</span> <span class="s2">&quot;latest&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dep</span><span class="o">.</span><span class="n">extras</span><span class="p">)</span> <span class="k">if</span> <span class="n">dep</span><span class="o">.</span><span class="n">extras</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">table</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="_validate_dependency">
+<a class="viewcode-back" href="../../api_reference.html#depcon.cli._validate_dependency">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">_validate_dependency</span><span class="p">(</span><span class="n">dep</span><span class="p">:</span> <span class="n">DependencySpec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate a dependency specification.&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Try to parse the dependency string</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">packaging.requirements</span><span class="w"> </span><span class="kn">import</span> <span class="n">Requirement</span>
+
+        <span class="n">Requirement</span><span class="p">(</span><span class="n">dep</span><span class="o">.</span><span class="n">to_pep621_string</span><span class="p">())</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_remove_duplicate_dependencies</span><span class="p">(</span>
+    <span class="n">grouped_deps</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">DependencySpec</span><span class="p">]],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove duplicate dependencies across groups, keeping the first occurrence.&quot;&quot;&quot;</span>
+    <span class="n">seen_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+    <span class="c1"># Process main dependencies first</span>
+    <span class="k">if</span> <span class="s2">&quot;main&quot;</span> <span class="ow">in</span> <span class="n">grouped_deps</span><span class="p">:</span>
+        <span class="n">main_deps</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">grouped_deps</span><span class="p">[</span><span class="s2">&quot;main&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">dep</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">seen_names</span><span class="p">:</span>
+                <span class="n">main_deps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dep</span><span class="p">)</span>
+                <span class="n">seen_names</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">dep</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">grouped_deps</span><span class="p">[</span><span class="s2">&quot;main&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">main_deps</span>
+
+    <span class="c1"># Process other groups</span>
+    <span class="k">for</span> <span class="n">group_name</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;dev&quot;</span><span class="p">,</span> <span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="s2">&quot;docs&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">group_name</span> <span class="ow">in</span> <span class="n">grouped_deps</span><span class="p">:</span>
+            <span class="n">filtered_deps</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">grouped_deps</span><span class="p">[</span><span class="n">group_name</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">dep</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">seen_names</span><span class="p">:</span>
+                    <span class="n">filtered_deps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dep</span><span class="p">)</span>
+                    <span class="n">seen_names</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">dep</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">grouped_deps</span><span class="p">[</span><span class="n">group_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">filtered_deps</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Lance Reinsmith.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        
+        
+    </div>
+    <hr/>
+    <div role="contentinfo">
+        <p>
+                    &copy; Copyright 2024, Lance Reinsmith.
+                Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3 using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+        </p>
+    </div>
+
+
+</body>
+</html>

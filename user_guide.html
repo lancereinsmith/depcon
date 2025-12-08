@@ -1,0 +1,706 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Guide &mdash; depcon 0.2.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=37f418d5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API Reference" href="api_reference.html" />
+    <link rel="prev" title="Quick Start Guide" href="quickstart.html" />
+     
+    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            depcon
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start Guide</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">User Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#commands-overview">Commands Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#convert-command">Convert Command</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#basic-usage">Basic Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#options">Options</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#requirements-files">Requirements Files</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#output-options">Output Options</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#processing-options">Processing Options</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#build-backend-options">Build Backend Options</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#group-configuration">Group Configuration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#project-metadata">Project Metadata</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#general-options">General Options</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#show-command">Show Command</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#validate-command">Validate Command</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id6">Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#list-command">List Command</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id10">Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id11">Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#check-command">Check Command</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id14">Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id15">Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id16">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#dependency-grouping">Dependency Grouping</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#main-dependencies">Main Dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#development-dependencies">Development Dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#test-dependencies">Test Dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#documentation-dependencies">Documentation Dependencies</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#supported-file-formats">Supported File Formats</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#standard-requirements-files">Standard Requirements Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#custom-files">Custom Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#file-format-support">File Format Support</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#build-backends">Build Backends</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#hatchling">Hatchling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#setuptools">Setuptools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#poetry">Poetry</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#tool-integration">Tool Integration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#uv-integration">uv Integration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#hatch-integration">Hatch Integration</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#advanced-usage">Advanced Usage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#custom-group-names">Custom Group Names</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#append-mode">Append Mode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#version-resolution">Version Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sorting-dependencies">Sorting Dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#backup-creation">Backup Creation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#troubleshooting">Troubleshooting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#common-issues">Common Issues</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#invalid-version-specifiers">Invalid Version Specifiers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#missing-dependencies">Missing Dependencies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#file-not-found">File Not Found</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#getting-help">Getting Help</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">depcon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">User Guide</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/user_guide.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="user-guide">
+<h1>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h1>
+<p>This guide covers all the features and options available in depcon. It’s organized by functionality to help you find what you need.</p>
+<section id="commands-overview">
+<h2>Commands Overview<a class="headerlink" href="#commands-overview" title="Link to this heading"></a></h2>
+<p>depcon provides several commands:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#convert-command"><span class="std std-ref">Convert Command</span></a> - Convert requirements files to pyproject.toml</p></li>
+<li><p><a class="reference internal" href="#show-command"><span class="std std-ref">Show Command</span></a> - Display dependencies from pyproject.toml</p></li>
+<li><p><a class="reference internal" href="#validate-command"><span class="std std-ref">Validate Command</span></a> - Validate pyproject.toml dependencies</p></li>
+<li><p><a class="reference internal" href="#list-command"><span class="std std-ref">List Command</span></a> - List all dependency groups</p></li>
+<li><p><a class="reference internal" href="#check-command"><span class="std std-ref">Check Command</span></a> - Check for common issues</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">export</span></code> - Export dependencies to requirements.txt</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">diff</span></code> - Show differences between files</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sync</span></code> - Sync dependencies to requirements files</p></li>
+</ul>
+</section>
+<section id="convert-command">
+<span id="id1"></span><h2>Convert Command<a class="headerlink" href="#convert-command" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">convert</span></code> command is the main functionality of depcon. It converts legacy requirements files to modern pyproject.toml format.</p>
+<section id="basic-usage">
+<h3>Basic Usage<a class="headerlink" href="#basic-usage" title="Link to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>depcon<span class="w"> </span>convert<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+</pre></div>
+</div>
+</section>
+<section id="options">
+<h3>Options<a class="headerlink" href="#options" title="Link to this heading"></a></h3>
+<section id="requirements-files">
+<h4>Requirements Files<a class="headerlink" href="#requirements-files" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-r,</span> <span class="pre">--requirements</span> <span class="pre">PATH</span></code>: Main requirements files (requirements.txt, requirements.in)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-d,</span> <span class="pre">--dev-requirements</span> <span class="pre">PATH</span></code>: Development requirements files</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-t,</span> <span class="pre">--test-requirements</span> <span class="pre">PATH</span></code>: Test requirements files</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--docs-requirements</span> <span class="pre">PATH</span></code>: Documentation requirements files</p></li>
+</ul>
+</section>
+<section id="output-options">
+<h4>Output Options<a class="headerlink" href="#output-options" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-o,</span> <span class="pre">--output</span> <span class="pre">PATH</span></code>: Output pyproject.toml file path (default: pyproject.toml)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--append</span> <span class="pre">/</span> <span class="pre">--no-append</span></code>: Append to existing dependencies instead of replacing</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--backup</span> <span class="pre">/</span> <span class="pre">--no-backup</span></code>: Create backup of existing pyproject.toml</p></li>
+</ul>
+</section>
+<section id="processing-options">
+<h4>Processing Options<a class="headerlink" href="#processing-options" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--resolve</span> <span class="pre">/</span> <span class="pre">--no-resolve</span></code>: Resolve and pin dependency versions</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--sort</span> <span class="pre">/</span> <span class="pre">--no-sort</span></code>: Sort dependencies alphabetically</p></li>
+</ul>
+</section>
+<section id="build-backend-options">
+<h4>Build Backend Options<a class="headerlink" href="#build-backend-options" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--build-backend</span> <span class="pre">[hatchling|setuptools|poetry]</span></code>: Build backend to use</p></li>
+</ul>
+</section>
+<section id="group-configuration">
+<h4>Group Configuration<a class="headerlink" href="#group-configuration" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--dev-group</span> <span class="pre">TEXT</span></code>: Name for development dependencies group (default: dev)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--test-group</span> <span class="pre">TEXT</span></code>: Name for test dependencies group (default: test)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--docs-group</span> <span class="pre">TEXT</span></code>: Name for documentation dependencies group (default: docs)</p></li>
+</ul>
+</section>
+<section id="project-metadata">
+<h4>Project Metadata<a class="headerlink" href="#project-metadata" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--project-name</span> <span class="pre">TEXT</span></code>: Project name (if creating new pyproject.toml)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--project-version</span> <span class="pre">TEXT</span></code>: Project version (if creating new pyproject.toml)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--project-description</span> <span class="pre">TEXT</span></code>: Project description (if creating new pyproject.toml)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--python-version</span> <span class="pre">TEXT</span></code>: Python version requirement (default: &gt;=3.11)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--use-optional-deps</span> <span class="pre">/</span> <span class="pre">--use-dependency-groups</span></code>: Use optional-dependencies (PEP 621 extras) instead of dependency-groups (PEP 735)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--remove-duplicates</span> <span class="pre">/</span> <span class="pre">--keep-duplicates</span></code>: Remove duplicate dependencies across groups (default: remove)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--strict</span> <span class="pre">/</span> <span class="pre">--no-strict</span></code>: Strict mode: fail on parsing errors instead of warning</p></li>
+</ul>
+</section>
+<section id="general-options">
+<h4>General Options<a class="headerlink" href="#general-options" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-v,</span> <span class="pre">--verbose</span></code>: Enable verbose output</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--help</span></code>: Show help message</p></li>
+</ul>
+</section>
+</section>
+<section id="examples">
+<h3>Examples<a class="headerlink" href="#examples" title="Link to this heading"></a></h3>
+<p>Basic conversion:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>depcon<span class="w"> </span>convert<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+</pre></div>
+</div>
+<p>Multiple files:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>depcon<span class="w"> </span>convert<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-r<span class="w"> </span>requirements.txt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span>requirements-dev.txt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-t<span class="w"> </span>requirements-test.txt
+</pre></div>
+</div>
+<p>With project metadata:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>depcon<span class="w"> </span>convert<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-r<span class="w"> </span>requirements.txt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--project-name<span class="w"> </span><span class="s2">&quot;my-project&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--project-description<span class="w"> </span><span class="s2">&quot;A great project&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--project-version<span class="w"> </span><span class="s2">&quot;1.0.0&quot;</span>
+</pre></div>
+</div>
+<p>Different build backend:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>depcon<span class="w"> </span>convert<span class="w"> </span>-r<span class="w"> </span>requirements.txt<span class="w"> </span>--build-backend<span class="w"> </span>setuptools
+</pre></div>
+</div>
+<p>Append mode:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>depcon<span class="w"> </span>convert<span class="w"> </span>-r<span class="w"> </span>new-requirements.txt<span class="w"> </span>--append
+</pre></div>
+</div>
+</section>
+</section>
+<section id="show-command">
+<span id="id2"></span><h2>Show Command<a class="headerlink" href="#show-command" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">show</span></code> command displays dependencies from a pyproject.toml file in various formats.</p>
+<section id="usage">
+<h3>Usage<a class="headerlink" href="#usage" title="Link to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>depcon<span class="w"> </span>show<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h3>Options<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-f,</span> <span class="pre">--file</span> <span class="pre">PATH</span></code>: Path to pyproject.toml file (default: pyproject.toml)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">[table|json|yaml]</span></code>: Output format (default: table)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--group</span> <span class="pre">TEXT</span></code>: Show only specific dependency group (main, dev, test, docs, or optional group name)</p></li>
+</ul>
+</section>
+<section id="id4">
+<h3>Examples<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<p>Show in table format:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>depcon<span class="w"> </span>show
+</pre></div>
+</div>
+<p>Show in JSON format:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>depcon<span class="w"> </span>show<span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+<p>Show in YAML format:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>depcon<span class="w"> </span>show<span class="w"> </span>--format<span class="w"> </span>yaml
+</pre></div>
+</div>
+<p>Show from specific file:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>depcon<span class="w"> </span>show<span class="w"> </span>-f<span class="w"> </span>my-project.toml
+</pre></div>
+</div>
+</section>
+</section>
+<section id="validate-command">
+<span id="id5"></span><h2>Validate Command<a class="headerlink" href="#validate-command" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">validate</span></code> command checks that dependencies in a pyproject.toml file are properly formatted.</p>
+<section id="id6">
+<h3>Usage<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>depcon<span class="w"> </span>validate<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+</section>
+<section id="id7">
+<h3>Options<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-f,</span> <span class="pre">--file</span> <span class="pre">PATH</span></code>: Path to pyproject.toml file (default: pyproject.toml)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--group</span> <span class="pre">TEXT</span></code>: Dependency group to validate (main, dev, test, docs)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--check-pypi</span> <span class="pre">/</span> <span class="pre">--no-check-pypi</span></code>: Check if packages exist on PyPI</p></li>
+</ul>
+</section>
+<section id="id8">
+<h3>Examples<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
+<p>Validate all dependencies:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>depcon<span class="w"> </span>validate
+</pre></div>
+</div>
+<p>Validate specific group:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>depcon<span class="w"> </span>validate<span class="w"> </span>--group<span class="w"> </span>dev
+</pre></div>
+</div>
+<p>Validate specific file:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>depcon<span class="w"> </span>validate<span class="w"> </span>-f<span class="w"> </span>my-project.toml
+</pre></div>
+</div>
+</section>
+</section>
+<section id="list-command">
+<span id="id9"></span><h2>List Command<a class="headerlink" href="#list-command" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">list</span></code> command lists all dependency groups in a pyproject.toml file.</p>
+<section id="id10">
+<h3>Usage<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>depcon<span class="w"> </span>list<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+</section>
+<section id="id11">
+<h3>Options<a class="headerlink" href="#id11" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-f,</span> <span class="pre">--file</span> <span class="pre">PATH</span></code>: Path to pyproject.toml file (default: pyproject.toml)</p></li>
+</ul>
+</section>
+<section id="id12">
+<h3>Examples<a class="headerlink" href="#id12" title="Link to this heading"></a></h3>
+<p>List all groups:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>depcon<span class="w"> </span>list
+</pre></div>
+</div>
+<p>List from specific file:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>depcon<span class="w"> </span>list<span class="w"> </span>-f<span class="w"> </span>my-project.toml
+</pre></div>
+</div>
+</section>
+</section>
+<section id="check-command">
+<span id="id13"></span><h2>Check Command<a class="headerlink" href="#check-command" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">check</span></code> command checks pyproject.toml for common issues.</p>
+<section id="id14">
+<h3>Usage<a class="headerlink" href="#id14" title="Link to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>depcon<span class="w"> </span>check<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+</section>
+<section id="id15">
+<h3>Options<a class="headerlink" href="#id15" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-f,</span> <span class="pre">--file</span> <span class="pre">PATH</span></code>: Path to pyproject.toml file (default: pyproject.toml)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--check-duplicates</span> <span class="pre">/</span> <span class="pre">--no-check-duplicates</span></code>: Check for duplicate dependencies (default: check)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--check-missing</span> <span class="pre">/</span> <span class="pre">--no-check-missing</span></code>: Check for missing optional dependencies</p></li>
+</ul>
+</section>
+<section id="id16">
+<h3>Examples<a class="headerlink" href="#id16" title="Link to this heading"></a></h3>
+<p>Check for issues:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>depcon<span class="w"> </span>check
+</pre></div>
+</div>
+<p>Check for duplicates:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>depcon<span class="w"> </span>check<span class="w"> </span>--check-duplicates
+</pre></div>
+</div>
+</section>
+</section>
+<section id="dependency-grouping">
+<h2>Dependency Grouping<a class="headerlink" href="#dependency-grouping" title="Link to this heading"></a></h2>
+<p>depcon intelligently groups dependencies based on common patterns:</p>
+<section id="main-dependencies">
+<h3>Main Dependencies<a class="headerlink" href="#main-dependencies" title="Link to this heading"></a></h3>
+<p>Core project dependencies that are required for the package to function:</p>
+<ul class="simple">
+<li><p>Web frameworks (Django, Flask, FastAPI)</p></li>
+<li><p>Data processing (pandas, numpy, scipy)</p></li>
+<li><p>HTTP clients (requests, httpx)</p></li>
+<li><p>Database drivers (psycopg2, pymongo)</p></li>
+<li><p>And many more…</p></li>
+</ul>
+</section>
+<section id="development-dependencies">
+<h3>Development Dependencies<a class="headerlink" href="#development-dependencies" title="Link to this heading"></a></h3>
+<p>Tools used during development but not required at runtime:</p>
+<ul class="simple">
+<li><p>Code formatters (black, isort)</p></li>
+<li><p>Linters (ruff, flake8, pylint)</p></li>
+<li><p>Type checkers (mypy, pyright)</p></li>
+<li><p>Testing tools (pytest, pytest-cov)</p></li>
+<li><p>Pre-commit hooks</p></li>
+<li><p>Build tools</p></li>
+</ul>
+</section>
+<section id="test-dependencies">
+<h3>Test Dependencies<a class="headerlink" href="#test-dependencies" title="Link to this heading"></a></h3>
+<p>Testing frameworks and utilities:</p>
+<ul class="simple">
+<li><p>Testing frameworks (pytest, unittest, nose2)</p></li>
+<li><p>Test coverage tools (pytest-cov, coverage)</p></li>
+<li><p>Test utilities (pytest-mock, factory-boy)</p></li>
+<li><p>Performance testing (pytest-benchmark)</p></li>
+</ul>
+</section>
+<section id="documentation-dependencies">
+<h3>Documentation Dependencies<a class="headerlink" href="#documentation-dependencies" title="Link to this heading"></a></h3>
+<p>Tools for building and maintaining documentation:</p>
+<ul class="simple">
+<li><p>Documentation generators (sphinx, mkdocs)</p></li>
+<li><p>Themes and extensions</p></li>
+<li><p>Documentation utilities</p></li>
+</ul>
+</section>
+</section>
+<section id="supported-file-formats">
+<h2>Supported File Formats<a class="headerlink" href="#supported-file-formats" title="Link to this heading"></a></h2>
+<p>depcon supports various requirements file formats:</p>
+<section id="standard-requirements-files">
+<h3>Standard Requirements Files<a class="headerlink" href="#standard-requirements-files" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code> - Standard pip requirements files</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">requirements.in</span></code> - pip-tools input files</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">requirements-dev.txt</span></code> - Development dependencies</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">requirements-test.txt</span></code> - Test dependencies</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">requirements-docs.txt</span></code> - Documentation dependencies</p></li>
+</ul>
+</section>
+<section id="custom-files">
+<h3>Custom Files<a class="headerlink" href="#custom-files" title="Link to this heading"></a></h3>
+<p>You can use any filename for requirements files:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>depcon<span class="w"> </span>convert<span class="w"> </span>-r<span class="w"> </span>my-deps.txt<span class="w"> </span>-d<span class="w"> </span>dev-tools.txt
+</pre></div>
+</div>
+</section>
+<section id="file-format-support">
+<h3>File Format Support<a class="headerlink" href="#file-format-support" title="Link to this heading"></a></h3>
+<p>depcon handles various requirement specifications:</p>
+<ul class="simple">
+<li><p>Version specifiers: <code class="docutils literal notranslate"><span class="pre">&gt;=2.25.0,&lt;3.0.0</span></code></p></li>
+<li><p>Extras: <code class="docutils literal notranslate"><span class="pre">requests[security]</span></code></p></li>
+<li><p>URLs: <code class="docutils literal notranslate"><span class="pre">git+https://github.com/user/repo.git</span></code></p></li>
+<li><p>Local paths: <code class="docutils literal notranslate"><span class="pre">./local-package</span></code></p></li>
+<li><p>Editable installs: <code class="docutils literal notranslate"><span class="pre">-e</span> <span class="pre">./local-package</span></code></p></li>
+<li><p>Environment markers: <code class="docutils literal notranslate"><span class="pre">requests;</span> <span class="pre">python_version</span> <span class="pre">&gt;=</span> <span class="pre">&quot;3.8&quot;</span></code></p></li>
+</ul>
+</section>
+</section>
+<section id="build-backends">
+<h2>Build Backends<a class="headerlink" href="#build-backends" title="Link to this heading"></a></h2>
+<p>depcon supports multiple build backends:</p>
+<section id="hatchling">
+<h3>Hatchling<a class="headerlink" href="#hatchling" title="Link to this heading"></a></h3>
+<p>The default and recommended backend:</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="k">[build-system]</span>
+<span class="n">requires</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;hatchling&quot;</span><span class="p">]</span>
+<span class="n">build-backend</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;hatchling.build&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="setuptools">
+<h3>Setuptools<a class="headerlink" href="#setuptools" title="Link to this heading"></a></h3>
+<p>Traditional Python packaging:</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="k">[build-system]</span>
+<span class="n">requires</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;setuptools&gt;=61.0&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;wheel&quot;</span><span class="p">]</span>
+<span class="n">build-backend</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;setuptools.build_meta&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="poetry">
+<h3>Poetry<a class="headerlink" href="#poetry" title="Link to this heading"></a></h3>
+<p>Poetry-style configuration:</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="k">[build-system]</span>
+<span class="n">requires</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;poetry-core&quot;</span><span class="p">]</span>
+<span class="n">build-backend</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;poetry.core.masonry.api&quot;</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="tool-integration">
+<h2>Tool Integration<a class="headerlink" href="#tool-integration" title="Link to this heading"></a></h2>
+<p>depcon automatically configures integration with modern Python tools:</p>
+<section id="uv-integration">
+<h3>uv Integration<a class="headerlink" href="#uv-integration" title="Link to this heading"></a></h3>
+<p>Uses <code class="docutils literal notranslate"><span class="pre">[dependency-groups]</span></code> for uv configuration (recommended by uv):</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="k">[dependency-groups]</span>
+<span class="n">dev</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="s2">&quot;pytest&gt;=7.0.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;black&gt;=23.0.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;ruff&gt;=0.1.0&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+<span class="n">test</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="s2">&quot;pytest&gt;=7.0.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;pytest-cov&gt;=4.0.0&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+<span class="n">docs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="s2">&quot;sphinx&gt;=5.0.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;sphinx-rtd-theme&gt;=1.0.0&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</section>
+<section id="hatch-integration">
+<h3>Hatch Integration<a class="headerlink" href="#hatch-integration" title="Link to this heading"></a></h3>
+<p>Configures hatch build targets:</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="k">[tool.hatch.build.targets.wheel]</span>
+<span class="n">packages</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;src&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="advanced-usage">
+<h2>Advanced Usage<a class="headerlink" href="#advanced-usage" title="Link to this heading"></a></h2>
+<section id="custom-group-names">
+<h3>Custom Group Names<a class="headerlink" href="#custom-group-names" title="Link to this heading"></a></h3>
+<p>You can customize the names of dependency groups:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>depcon<span class="w"> </span>convert<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-r<span class="w"> </span>requirements.txt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--dev-group<span class="w"> </span><span class="s2">&quot;development&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--test-group<span class="w"> </span><span class="s2">&quot;testing&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--docs-group<span class="w"> </span><span class="s2">&quot;documentation&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="append-mode">
+<h3>Append Mode<a class="headerlink" href="#append-mode" title="Link to this heading"></a></h3>
+<p>Add dependencies to existing pyproject.toml:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>depcon<span class="w"> </span>convert<span class="w"> </span>-r<span class="w"> </span>new-requirements.txt<span class="w"> </span>--append
+</pre></div>
+</div>
+</section>
+<section id="version-resolution">
+<h3>Version Resolution<a class="headerlink" href="#version-resolution" title="Link to this heading"></a></h3>
+<p>Resolve and pin dependency versions:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>depcon<span class="w"> </span>convert<span class="w"> </span>-r<span class="w"> </span>requirements.in<span class="w"> </span>--resolve
+</pre></div>
+</div>
+<p>This will:
+- Resolve all dependencies
+- Pin exact versions
+- Create a lock file (if supported)</p>
+</section>
+<section id="sorting-dependencies">
+<h3>Sorting Dependencies<a class="headerlink" href="#sorting-dependencies" title="Link to this heading"></a></h3>
+<p>Sort dependencies alphabetically:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>depcon<span class="w"> </span>convert<span class="w"> </span>-r<span class="w"> </span>requirements.txt<span class="w"> </span>--sort
+</pre></div>
+</div>
+</section>
+<section id="backup-creation">
+<h3>Backup Creation<a class="headerlink" href="#backup-creation" title="Link to this heading"></a></h3>
+<p>Create backups of existing files:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>depcon<span class="w"> </span>convert<span class="w"> </span>-r<span class="w"> </span>requirements.txt<span class="w"> </span>--backup
+</pre></div>
+</div>
+<p>This creates a <code class="docutils literal notranslate"><span class="pre">.bak</span></code> file with the original content.</p>
+</section>
+</section>
+<section id="troubleshooting">
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading"></a></h2>
+<section id="common-issues">
+<h3>Common Issues<a class="headerlink" href="#common-issues" title="Link to this heading"></a></h3>
+<section id="invalid-version-specifiers">
+<h4>Invalid Version Specifiers<a class="headerlink" href="#invalid-version-specifiers" title="Link to this heading"></a></h4>
+<p>If you see errors about invalid version specifiers:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Check the problematic line</span>
+depcon<span class="w"> </span>convert<span class="w"> </span>-r<span class="w"> </span>requirements.txt<span class="w"> </span>--verbose
+
+<span class="c1"># Fix the version specifier in your requirements file</span>
+<span class="c1"># Then try again</span>
+depcon<span class="w"> </span>convert<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+</pre></div>
+</div>
+</section>
+<section id="missing-dependencies">
+<h4>Missing Dependencies<a class="headerlink" href="#missing-dependencies" title="Link to this heading"></a></h4>
+<p>If dependencies can’t be resolved:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Try without resolution</span>
+depcon<span class="w"> </span>convert<span class="w"> </span>-r<span class="w"> </span>requirements.txt<span class="w"> </span>--no-resolve
+
+<span class="c1"># Or resolve manually</span>
+pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+depcon<span class="w"> </span>convert<span class="w"> </span>-r<span class="w"> </span>requirements.txt<span class="w"> </span>--resolve
+</pre></div>
+</div>
+</section>
+<section id="file-not-found">
+<h4>File Not Found<a class="headerlink" href="#file-not-found" title="Link to this heading"></a></h4>
+<p>Make sure your requirements files exist:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># List files</span>
+ls<span class="w"> </span>-la<span class="w"> </span>requirements*.txt
+
+<span class="c1"># Use absolute paths if needed</span>
+depcon<span class="w"> </span>convert<span class="w"> </span>-r<span class="w"> </span>/full/path/to/requirements.txt
+</pre></div>
+</div>
+</section>
+</section>
+<section id="getting-help">
+<h3>Getting Help<a class="headerlink" href="#getting-help" title="Link to this heading"></a></h3>
+<p>For more help:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># General help</span>
+depcon<span class="w"> </span>--help
+
+<span class="c1"># Command-specific help</span>
+depcon<span class="w"> </span>convert<span class="w"> </span>--help
+depcon<span class="w"> </span>show<span class="w"> </span>--help
+depcon<span class="w"> </span>validate<span class="w"> </span>--help
+
+<span class="c1"># Verbose output</span>
+depcon<span class="w"> </span>convert<span class="w"> </span>-r<span class="w"> </span>requirements.txt<span class="w"> </span>--verbose
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="quickstart.html" class="btn btn-neutral float-left" title="Quick Start Guide" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api_reference.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Lance Reinsmith.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        
+            <a href="api_reference.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        
+        
+            <a href="quickstart.html" class="btn btn-neutral" title="Quick Start Guide" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        
+    </div>
+    <hr/>
+    <div role="contentinfo">
+        <p>
+                    &copy; Copyright 2024, Lance Reinsmith.
+                Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3 using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+        </p>
+    </div>
+
+
+</body>
+</html>

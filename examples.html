@@ -1,0 +1,663 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Examples &mdash; depcon 0.2.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=37f418d5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Contributing" href="contributing.html" />
+    <link rel="prev" title="API Reference" href="api_reference.html" />
+     
+    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            depcon
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_guide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#basic-examples">Basic Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#simple-requirements-conversion">Simple Requirements Conversion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#multiple-requirements-files">Multiple Requirements Files</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#advanced-examples">Advanced Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#complete-project-migration">Complete Project Migration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#custom-group-names">Custom Group Names</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#different-build-backends">Different Build Backends</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#append-mode">Append Mode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#version-resolution">Version Resolution</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#real-world-examples">Real-World Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#django-project">Django Project</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#data-science-project">Data Science Project</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fastapi-project">FastAPI Project</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#cli-examples">CLI Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#viewing-dependencies">Viewing Dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#validating-dependencies">Validating Dependencies</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#integration-examples">Integration Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#uv-integration">uv Integration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#hatch-integration">Hatch Integration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#poetry-integration">Poetry Integration</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#ci-cd-integration">CI/CD Integration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#github-actions">GitHub Actions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#docker-integration">Docker Integration</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#troubleshooting-examples">Troubleshooting Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#common-issues-and-solutions">Common Issues and Solutions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#invalid-version-specifiers">Invalid Version Specifiers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#missing-dependencies">Missing Dependencies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#file-not-found">File Not Found</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#complex-requirements">Complex Requirements</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#best-practices">Best Practices</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#project-structure">Project Structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#version-management">Version Management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dependency-grouping">Dependency Grouping</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">depcon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Examples</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/examples.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="examples">
+<h1>Examples<a class="headerlink" href="#examples" title="Link to this heading"></a></h1>
+<p>This section provides comprehensive examples of using depcon in various scenarios.</p>
+<section id="basic-examples">
+<h2>Basic Examples<a class="headerlink" href="#basic-examples" title="Link to this heading"></a></h2>
+<section id="simple-requirements-conversion">
+<h3>Simple Requirements Conversion<a class="headerlink" href="#simple-requirements-conversion" title="Link to this heading"></a></h3>
+<p>Convert a basic requirements.txt file:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># requirements.txt</span>
+requests&gt;<span class="o">=</span><span class="m">2</span>.25.0
+numpy&gt;<span class="o">=</span><span class="m">1</span>.20.0
+pandas&gt;<span class="o">=</span><span class="m">1</span>.3.0
+
+<span class="c1"># Convert</span>
+depcon<span class="w"> </span>convert<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+
+<span class="c1"># Result: pyproject.toml</span>
+<span class="o">[</span>build-system<span class="o">]</span>
+<span class="nv">requires</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span><span class="s2">&quot;hatchling&quot;</span><span class="o">]</span>
+build-backend<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;hatchling.build&quot;</span>
+
+<span class="o">[</span>project<span class="o">]</span>
+<span class="nv">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;my-project&quot;</span>
+<span class="nv">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;0.1.0&quot;</span>
+<span class="nv">description</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+requires-python<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&gt;=3.8&quot;</span>
+<span class="nv">dependencies</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span>
+<span class="w">    </span><span class="s2">&quot;numpy&gt;=1.20.0&quot;</span>,
+<span class="w">    </span><span class="s2">&quot;pandas&gt;=1.3.0&quot;</span>,
+<span class="w">    </span><span class="s2">&quot;requests&gt;=2.25.0&quot;</span>,
+<span class="o">]</span>
+</pre></div>
+</div>
+</section>
+<section id="multiple-requirements-files">
+<h3>Multiple Requirements Files<a class="headerlink" href="#multiple-requirements-files" title="Link to this heading"></a></h3>
+<p>Convert multiple requirement files with proper grouping:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># requirements.txt</span>
+requests&gt;<span class="o">=</span><span class="m">2</span>.25.0
+numpy&gt;<span class="o">=</span><span class="m">1</span>.20.0
+
+<span class="c1"># requirements-dev.txt</span>
+pytest&gt;<span class="o">=</span><span class="m">7</span>.0.0
+black&gt;<span class="o">=</span><span class="m">23</span>.0.0
+ruff&gt;<span class="o">=</span><span class="m">0</span>.1.0
+
+<span class="c1"># requirements-test.txt</span>
+pytest-cov&gt;<span class="o">=</span><span class="m">4</span>.0.0
+pytest-mock&gt;<span class="o">=</span><span class="m">3</span>.10.0
+
+<span class="c1"># Convert</span>
+depcon<span class="w"> </span>convert<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-r<span class="w"> </span>requirements.txt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span>requirements-dev.txt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-t<span class="w"> </span>requirements-test.txt
+
+<span class="c1"># Result: pyproject.toml</span>
+<span class="o">[</span>build-system<span class="o">]</span>
+<span class="nv">requires</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span><span class="s2">&quot;hatchling&quot;</span><span class="o">]</span>
+build-backend<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;hatchling.build&quot;</span>
+
+<span class="o">[</span>project<span class="o">]</span>
+<span class="nv">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;my-project&quot;</span>
+<span class="nv">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;0.1.0&quot;</span>
+<span class="nv">description</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+requires-python<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&gt;=3.8&quot;</span>
+<span class="nv">dependencies</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span>
+<span class="w">    </span><span class="s2">&quot;numpy&gt;=1.20.0&quot;</span>,
+<span class="w">    </span><span class="s2">&quot;requests&gt;=2.25.0&quot;</span>,
+<span class="o">]</span>
+
+<span class="o">[</span>project.optional-dependencies<span class="o">]</span>
+<span class="nv">dev</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span>
+<span class="w">    </span><span class="s2">&quot;black&gt;=23.0.0&quot;</span>,
+<span class="w">    </span><span class="s2">&quot;pytest&gt;=7.0.0&quot;</span>,
+<span class="w">    </span><span class="s2">&quot;ruff&gt;=0.1.0&quot;</span>,
+<span class="o">]</span>
+<span class="nb">test</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span>
+<span class="w">    </span><span class="s2">&quot;pytest-cov&gt;=4.0.0&quot;</span>,
+<span class="w">    </span><span class="s2">&quot;pytest-mock&gt;=3.10.0&quot;</span>,
+<span class="o">]</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="advanced-examples">
+<h2>Advanced Examples<a class="headerlink" href="#advanced-examples" title="Link to this heading"></a></h2>
+<section id="complete-project-migration">
+<h3>Complete Project Migration<a class="headerlink" href="#complete-project-migration" title="Link to this heading"></a></h3>
+<p>Migrate a complete project with all metadata:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>depcon<span class="w"> </span>convert<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-r<span class="w"> </span>requirements.txt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span>requirements-dev.txt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-t<span class="w"> </span>requirements-test.txt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--docs-requirements<span class="w"> </span>requirements-docs.txt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--project-name<span class="w"> </span><span class="s2">&quot;awesome-project&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--project-description<span class="w"> </span><span class="s2">&quot;An awesome Python project&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--project-version<span class="w"> </span><span class="s2">&quot;1.0.0&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--python-version<span class="w"> </span><span class="s2">&quot;&gt;=3.9&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--build-backend<span class="w"> </span>hatchling
+</pre></div>
+</div>
+</section>
+<section id="custom-group-names">
+<h3>Custom Group Names<a class="headerlink" href="#custom-group-names" title="Link to this heading"></a></h3>
+<p>Use custom names for dependency groups:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>depcon<span class="w"> </span>convert<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-r<span class="w"> </span>requirements.txt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span>requirements-dev.txt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--dev-group<span class="w"> </span><span class="s2">&quot;development&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--test-group<span class="w"> </span><span class="s2">&quot;testing&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="different-build-backends">
+<h3>Different Build Backends<a class="headerlink" href="#different-build-backends" title="Link to this heading"></a></h3>
+<p>Use setuptools instead of hatchling:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>depcon<span class="w"> </span>convert<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-r<span class="w"> </span>requirements.txt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--build-backend<span class="w"> </span>setuptools
+</pre></div>
+</div>
+</section>
+<section id="append-mode">
+<h3>Append Mode<a class="headerlink" href="#append-mode" title="Link to this heading"></a></h3>
+<p>Add new dependencies to existing pyproject.toml:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Add new requirements</span>
+depcon<span class="w"> </span>convert<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-r<span class="w"> </span>new-requirements.txt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--append
+</pre></div>
+</div>
+</section>
+<section id="version-resolution">
+<h3>Version Resolution<a class="headerlink" href="#version-resolution" title="Link to this heading"></a></h3>
+<p>Resolve and pin all dependency versions:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>depcon<span class="w"> </span>convert<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-r<span class="w"> </span>requirements.in<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--resolve
+</pre></div>
+</div>
+</section>
+</section>
+<section id="real-world-examples">
+<h2>Real-World Examples<a class="headerlink" href="#real-world-examples" title="Link to this heading"></a></h2>
+<section id="django-project">
+<h3>Django Project<a class="headerlink" href="#django-project" title="Link to this heading"></a></h3>
+<p>Convert a Django project with development and testing dependencies:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># requirements.txt</span>
+Django&gt;<span class="o">=</span><span class="m">4</span>.2.0
+psycopg2-binary&gt;<span class="o">=</span><span class="m">2</span>.9.0
+redis&gt;<span class="o">=</span><span class="m">4</span>.5.0
+celery&gt;<span class="o">=</span><span class="m">5</span>.3.0
+
+<span class="c1"># requirements-dev.txt</span>
+pytest&gt;<span class="o">=</span><span class="m">7</span>.0.0
+pytest-django&gt;<span class="o">=</span><span class="m">4</span>.5.0
+black&gt;<span class="o">=</span><span class="m">23</span>.0.0
+ruff&gt;<span class="o">=</span><span class="m">0</span>.1.0
+mypy&gt;<span class="o">=</span><span class="m">1</span>.0.0
+
+<span class="c1"># Convert</span>
+depcon<span class="w"> </span>convert<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-r<span class="w"> </span>requirements.txt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span>requirements-dev.txt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--project-name<span class="w"> </span><span class="s2">&quot;my-django-app&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--project-description<span class="w"> </span><span class="s2">&quot;A Django web application&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="data-science-project">
+<h3>Data Science Project<a class="headerlink" href="#data-science-project" title="Link to this heading"></a></h3>
+<p>Convert a data science project with multiple dependency types:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># requirements.txt</span>
+pandas&gt;<span class="o">=</span><span class="m">2</span>.0.0
+numpy&gt;<span class="o">=</span><span class="m">1</span>.24.0
+scikit-learn&gt;<span class="o">=</span><span class="m">1</span>.3.0
+matplotlib&gt;<span class="o">=</span><span class="m">3</span>.7.0
+jupyter&gt;<span class="o">=</span><span class="m">1</span>.0.0
+
+<span class="c1"># requirements-dev.txt</span>
+pytest&gt;<span class="o">=</span><span class="m">7</span>.0.0
+black&gt;<span class="o">=</span><span class="m">23</span>.0.0
+ruff&gt;<span class="o">=</span><span class="m">0</span>.1.0
+pre-commit&gt;<span class="o">=</span><span class="m">3</span>.0.0
+
+<span class="c1"># requirements-docs.txt</span>
+sphinx&gt;<span class="o">=</span><span class="m">5</span>.0.0
+sphinx-rtd-theme&gt;<span class="o">=</span><span class="m">1</span>.0.0
+myst-parser&gt;<span class="o">=</span><span class="m">1</span>.0.0
+
+<span class="c1"># Convert</span>
+depcon<span class="w"> </span>convert<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-r<span class="w"> </span>requirements.txt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span>requirements-dev.txt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--docs-requirements<span class="w"> </span>requirements-docs.txt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--project-name<span class="w"> </span><span class="s2">&quot;data-analysis-tool&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--project-description<span class="w"> </span><span class="s2">&quot;A tool for data analysis and visualization&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="fastapi-project">
+<h3>FastAPI Project<a class="headerlink" href="#fastapi-project" title="Link to this heading"></a></h3>
+<p>Convert a FastAPI project with async dependencies:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># requirements.txt</span>
+fastapi&gt;<span class="o">=</span><span class="m">0</span>.100.0
+uvicorn&gt;<span class="o">=</span><span class="m">0</span>.23.0
+pydantic&gt;<span class="o">=</span><span class="m">2</span>.0.0
+sqlalchemy&gt;<span class="o">=</span><span class="m">2</span>.0.0
+alembic&gt;<span class="o">=</span><span class="m">2</span>.0.0
+
+<span class="c1"># requirements-dev.txt</span>
+pytest&gt;<span class="o">=</span><span class="m">7</span>.0.0
+pytest-asyncio&gt;<span class="o">=</span><span class="m">0</span>.21.0
+httpx&gt;<span class="o">=</span><span class="m">0</span>.24.0
+black&gt;<span class="o">=</span><span class="m">23</span>.0.0
+ruff&gt;<span class="o">=</span><span class="m">0</span>.1.0
+
+<span class="c1"># Convert</span>
+depcon<span class="w"> </span>convert<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-r<span class="w"> </span>requirements.txt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span>requirements-dev.txt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--project-name<span class="w"> </span><span class="s2">&quot;my-fastapi-app&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--project-description<span class="w"> </span><span class="s2">&quot;A FastAPI web service&quot;</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="cli-examples">
+<h2>CLI Examples<a class="headerlink" href="#cli-examples" title="Link to this heading"></a></h2>
+<section id="viewing-dependencies">
+<h3>Viewing Dependencies<a class="headerlink" href="#viewing-dependencies" title="Link to this heading"></a></h3>
+<p>Display dependencies in different formats:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Table format (default)</span>
+depcon<span class="w"> </span>show
+
+<span class="c1"># JSON format</span>
+depcon<span class="w"> </span>show<span class="w"> </span>--format<span class="w"> </span>json
+
+<span class="c1"># YAML format</span>
+depcon<span class="w"> </span>show<span class="w"> </span>--format<span class="w"> </span>yaml
+
+<span class="c1"># Specific file</span>
+depcon<span class="w"> </span>show<span class="w"> </span>-f<span class="w"> </span>my-project.toml
+</pre></div>
+</div>
+</section>
+<section id="validating-dependencies">
+<h3>Validating Dependencies<a class="headerlink" href="#validating-dependencies" title="Link to this heading"></a></h3>
+<p>Validate dependency specifications:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Validate all dependencies</span>
+depcon<span class="w"> </span>validate
+
+<span class="c1"># Validate specific group</span>
+depcon<span class="w"> </span>validate<span class="w"> </span>--group<span class="w"> </span>dev
+
+<span class="c1"># Validate specific file</span>
+depcon<span class="w"> </span>validate<span class="w"> </span>-f<span class="w"> </span>my-project.toml
+</pre></div>
+</div>
+</section>
+</section>
+<section id="integration-examples">
+<h2>Integration Examples<a class="headerlink" href="#integration-examples" title="Link to this heading"></a></h2>
+<section id="uv-integration">
+<h3>uv Integration<a class="headerlink" href="#uv-integration" title="Link to this heading"></a></h3>
+<p>Work with uv for dependency management:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Initialize project</span>
+uv<span class="w"> </span>init
+
+<span class="c1"># Convert requirements</span>
+depcon<span class="w"> </span>convert<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+
+<span class="c1"># Sync dependencies</span>
+uv<span class="w"> </span>sync
+
+<span class="c1"># Add new dependency</span>
+uv<span class="w"> </span>add<span class="w"> </span>requests
+
+<span class="c1"># Update pyproject.toml</span>
+depcon<span class="w"> </span>convert<span class="w"> </span>-r<span class="w"> </span>requirements.txt<span class="w"> </span>--append
+</pre></div>
+</div>
+</section>
+<section id="hatch-integration">
+<h3>Hatch Integration<a class="headerlink" href="#hatch-integration" title="Link to this heading"></a></h3>
+<p>Use with hatch for building and publishing:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Convert with hatchling backend</span>
+depcon<span class="w"> </span>convert<span class="w"> </span>-r<span class="w"> </span>requirements.txt<span class="w"> </span>--build-backend<span class="w"> </span>hatchling
+
+<span class="c1"># Build package</span>
+hatch<span class="w"> </span>build
+
+<span class="c1"># Publish package</span>
+hatch<span class="w"> </span>publish
+</pre></div>
+</div>
+</section>
+<section id="poetry-integration">
+<h3>Poetry Integration<a class="headerlink" href="#poetry-integration" title="Link to this heading"></a></h3>
+<p>Convert to poetry-style configuration:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Convert with poetry backend</span>
+depcon<span class="w"> </span>convert<span class="w"> </span>-r<span class="w"> </span>requirements.txt<span class="w"> </span>--build-backend<span class="w"> </span>poetry
+
+<span class="c1"># Install dependencies</span>
+poetry<span class="w"> </span>install
+
+<span class="c1"># Build package</span>
+poetry<span class="w"> </span>build
+</pre></div>
+</div>
+</section>
+</section>
+<section id="ci-cd-integration">
+<h2>CI/CD Integration<a class="headerlink" href="#ci-cd-integration" title="Link to this heading"></a></h2>
+<section id="github-actions">
+<h3>GitHub Actions<a class="headerlink" href="#github-actions" title="Link to this heading"></a></h3>
+<p>Example GitHub Actions workflow:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CI</span>
+<span class="nt">on</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">push</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">pull_request</span><span class="p p-Indicator">]</span>
+<span class="nt">jobs</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">test</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">runs-on</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu-latest</span>
+<span class="w">    </span><span class="nt">steps</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/checkout@v3</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/setup-python@v4</span>
+<span class="w">        </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">python-version</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;3.11&#39;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Install uv</span>
+<span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pip install uv</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Convert requirements</span>
+<span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">uvx depcon convert -r requirements.txt</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Install dependencies</span>
+<span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">uv sync</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Run tests</span>
+<span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">uv run pytest</span>
+</pre></div>
+</div>
+</section>
+<section id="docker-integration">
+<h3>Docker Integration<a class="headerlink" href="#docker-integration" title="Link to this heading"></a></h3>
+<p>Example Dockerfile:</p>
+<div class="highlight-dockerfile notranslate"><div class="highlight"><pre><span></span><span class="k">FROM</span><span class="w"> </span><span class="s">python:3.11-slim</span>
+
+<span class="c"># Install uv</span>
+<span class="k">RUN</span><span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>uv
+
+<span class="c"># Copy requirements and convert</span>
+<span class="k">COPY</span><span class="w"> </span>requirements.txt<span class="w"> </span>.
+<span class="k">RUN</span><span class="w"> </span>uvx<span class="w"> </span>depcon<span class="w"> </span>convert<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+
+<span class="c"># Install dependencies</span>
+<span class="k">RUN</span><span class="w"> </span>uv<span class="w"> </span>sync
+
+<span class="c"># Copy source code</span>
+<span class="k">COPY</span><span class="w"> </span>src/<span class="w"> </span>/app/src/
+<span class="k">COPY</span><span class="w"> </span>pyproject.toml<span class="w"> </span>/app/
+
+<span class="c"># Set working directory</span>
+<span class="k">WORKDIR</span><span class="w"> </span><span class="s">/app</span>
+
+<span class="c"># Run application</span>
+<span class="k">CMD</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;uv&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;run&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;python&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;-m&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;src.main&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="troubleshooting-examples">
+<h2>Troubleshooting Examples<a class="headerlink" href="#troubleshooting-examples" title="Link to this heading"></a></h2>
+<section id="common-issues-and-solutions">
+<h3>Common Issues and Solutions<a class="headerlink" href="#common-issues-and-solutions" title="Link to this heading"></a></h3>
+<section id="invalid-version-specifiers">
+<h4>Invalid Version Specifiers<a class="headerlink" href="#invalid-version-specifiers" title="Link to this heading"></a></h4>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Problem: Invalid version specifier</span>
+<span class="c1"># requirements.txt contains: requests&gt;=2.25.0,&lt;3.0.0</span>
+
+<span class="c1"># Solution: Check with verbose output</span>
+depcon<span class="w"> </span>convert<span class="w"> </span>-r<span class="w"> </span>requirements.txt<span class="w"> </span>--verbose
+
+<span class="c1"># Fix the version specifier in requirements.txt</span>
+<span class="c1"># Then convert again</span>
+depcon<span class="w"> </span>convert<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+</pre></div>
+</div>
+</section>
+<section id="missing-dependencies">
+<h4>Missing Dependencies<a class="headerlink" href="#missing-dependencies" title="Link to this heading"></a></h4>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Problem: Dependencies can&#39;t be resolved</span>
+<span class="c1"># Solution: Try without resolution first</span>
+depcon<span class="w"> </span>convert<span class="w"> </span>-r<span class="w"> </span>requirements.txt<span class="w"> </span>--no-resolve
+
+<span class="c1"># Or resolve manually</span>
+pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+depcon<span class="w"> </span>convert<span class="w"> </span>-r<span class="w"> </span>requirements.txt<span class="w"> </span>--resolve
+</pre></div>
+</div>
+</section>
+<section id="file-not-found">
+<h4>File Not Found<a class="headerlink" href="#file-not-found" title="Link to this heading"></a></h4>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Problem: Requirements file not found</span>
+<span class="c1"># Solution: Check file exists and use correct path</span>
+ls<span class="w"> </span>-la<span class="w"> </span>requirements*.txt
+depcon<span class="w"> </span>convert<span class="w"> </span>-r<span class="w"> </span>./requirements.txt
+</pre></div>
+</div>
+</section>
+<section id="complex-requirements">
+<h4>Complex Requirements<a class="headerlink" href="#complex-requirements" title="Link to this heading"></a></h4>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Problem: Complex requirements with URLs and markers</span>
+<span class="c1"># requirements.txt contains:</span>
+<span class="c1"># git+https://github.com/user/repo.git</span>
+<span class="c1"># requests; python_version &gt;= &quot;3.8&quot;</span>
+
+<span class="c1"># Solution: depcon handles these automatically</span>
+depcon<span class="w"> </span>convert<span class="w"> </span>-r<span class="w"> </span>requirements.txt<span class="w"> </span>--verbose
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="best-practices">
+<h2>Best Practices<a class="headerlink" href="#best-practices" title="Link to this heading"></a></h2>
+<section id="project-structure">
+<h3>Project Structure<a class="headerlink" href="#project-structure" title="Link to this heading"></a></h3>
+<p>Organize your requirements files:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>my-project/
+├── requirements.txt          # Main dependencies
+├── requirements-dev.txt      # Development tools
+├── requirements-test.txt     # Testing tools
+├── requirements-docs.txt     # Documentation tools
+├── pyproject.toml           # Generated by depcon
+└── src/
+    └── my_project/
+</pre></div>
+</div>
+</section>
+<section id="version-management">
+<h3>Version Management<a class="headerlink" href="#version-management" title="Link to this heading"></a></h3>
+<p>Use appropriate version specifiers:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span># Good: Specific versions for production
+requests&gt;=2.25.0,&lt;3.0.0
+
+# Good: Minimum versions for development
+pytest&gt;=7.0.0
+
+# Avoid: Exact versions unless necessary
+requests==2.28.0
+</pre></div>
+</div>
+</section>
+<section id="dependency-grouping">
+<h3>Dependency Grouping<a class="headerlink" href="#dependency-grouping" title="Link to this heading"></a></h3>
+<p>Group dependencies logically:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span># requirements.txt - Core functionality
+requests
+numpy
+pandas
+
+# requirements-dev.txt - Development tools
+pytest
+black
+ruff
+mypy
+
+# requirements-test.txt - Testing tools
+pytest-cov
+pytest-mock
+factory-boy
+
+# requirements-docs.txt - Documentation
+sphinx
+sphinx-rtd-theme
+myst-parser
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="api_reference.html" class="btn btn-neutral float-left" title="API Reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="contributing.html" class="btn btn-neutral float-right" title="Contributing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Lance Reinsmith.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        
+            <a href="contributing.html" class="btn btn-neutral float-right" title="Contributing" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        
+        
+            <a href="api_reference.html" class="btn btn-neutral" title="API Reference" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        
+    </div>
+    <hr/>
+    <div role="contentinfo">
+        <p>
+                    &copy; Copyright 2024, Lance Reinsmith.
+                Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3 using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+        </p>
+    </div>
+
+
+</body>
+</html>

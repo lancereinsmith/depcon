@@ -1,0 +1,598 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contributing &mdash; depcon 0.2.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=37f418d5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Changelog" href="changelog.html" />
+    <link rel="prev" title="Examples" href="examples.html" />
+     
+    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            depcon
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_guide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#getting-started">Getting Started</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#fork-and-clone">Fork and Clone</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#development-setup">Development Setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#running-tests">Running Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#linting-and-formatting">Linting and Formatting</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#development-workflow">Development Workflow</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#branching">Branching</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#commit-messages">Commit Messages</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#code-style">Code Style</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#python-code">Python Code</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#documentation">Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#testing">Testing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#test-structure">Test Structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#writing-tests">Writing Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#test-fixtures">Test Fixtures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#running-specific-tests">Running Specific Tests</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#pull-request-process">Pull Request Process</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#before-submitting">Before Submitting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#creating-a-pull-request">Creating a Pull Request</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pull-request-template">Pull Request Template</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#issue-reporting">Issue Reporting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#bug-reports">Bug Reports</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#feature-requests">Feature Requests</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#development-guidelines">Development Guidelines</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#architecture">Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#adding-new-features">Adding New Features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#backward-compatibility">Backward Compatibility</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#performance">Performance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#security">Security</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#release-process">Release Process</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#version-numbering">Version Numbering</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#release-checklist">Release Checklist</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#getting-help">Getting Help</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#community-guidelines">Community Guidelines</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#code-of-conduct">Code of Conduct</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#communication">Communication</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#recognition">Recognition</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">depcon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Contributing</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/contributing.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="contributing">
+<h1>Contributing<a class="headerlink" href="#contributing" title="Link to this heading"></a></h1>
+<p>We welcome contributions to depcon! This guide will help you get started with contributing to the project.</p>
+<section id="getting-started">
+<h2>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading"></a></h2>
+<section id="fork-and-clone">
+<h3>Fork and Clone<a class="headerlink" href="#fork-and-clone" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>Fork the repository on GitHub</p></li>
+<li><p>Clone your fork locally:</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/your-username/depcon.git
+<span class="nb">cd</span><span class="w"> </span>depcon
+</pre></div>
+</div>
+</section>
+<section id="development-setup">
+<h3>Development Setup<a class="headerlink" href="#development-setup" title="Link to this heading"></a></h3>
+<p>Set up your development environment:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Install uv (recommended)</span>
+curl<span class="w"> </span>-LsSf<span class="w"> </span>https://astral.sh/uv/install.sh<span class="w"> </span><span class="p">|</span><span class="w"> </span>sh
+
+<span class="c1"># Or install with pip</span>
+pip<span class="w"> </span>install<span class="w"> </span>uv
+
+<span class="c1"># Install in development mode</span>
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[dev]&quot;</span>
+
+<span class="c1"># Install pre-commit hooks</span>
+pre-commit<span class="w"> </span>install
+</pre></div>
+</div>
+<p>Alternative setup with pip:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create virtual environment</span>
+python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>venv
+<span class="nb">source</span><span class="w"> </span>venv/bin/activate<span class="w">  </span><span class="c1"># On Windows: venv\Scripts\activate</span>
+
+<span class="c1"># Install in development mode</span>
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[dev]&quot;</span>
+
+<span class="c1"># Install pre-commit hooks</span>
+pre-commit<span class="w"> </span>install
+</pre></div>
+</div>
+</section>
+<section id="running-tests">
+<h3>Running Tests<a class="headerlink" href="#running-tests" title="Link to this heading"></a></h3>
+<p>Run the test suite:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Run all tests</span>
+pytest
+
+<span class="c1"># Run with coverage</span>
+pytest<span class="w"> </span>--cov<span class="o">=</span>depcon
+
+<span class="c1"># Run specific test file</span>
+pytest<span class="w"> </span>tests/test_models.py
+
+<span class="c1"># Run with verbose output</span>
+pytest<span class="w"> </span>-v
+</pre></div>
+</div>
+</section>
+<section id="linting-and-formatting">
+<h3>Linting and Formatting<a class="headerlink" href="#linting-and-formatting" title="Link to this heading"></a></h3>
+<p>Check code quality:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Run ruff linter</span>
+ruff<span class="w"> </span>check<span class="w"> </span>src/
+
+<span class="c1"># Fix auto-fixable issues</span>
+ruff<span class="w"> </span>check<span class="w"> </span>src/<span class="w"> </span>--fix
+
+<span class="c1"># Run black formatter</span>
+black<span class="w"> </span>src/
+
+<span class="c1"># Check with mypy</span>
+mypy<span class="w"> </span>src/
+
+<span class="c1"># Run all checks</span>
+pre-commit<span class="w"> </span>run<span class="w"> </span>--all-files
+</pre></div>
+</div>
+</section>
+</section>
+<section id="development-workflow">
+<h2>Development Workflow<a class="headerlink" href="#development-workflow" title="Link to this heading"></a></h2>
+<section id="branching">
+<h3>Branching<a class="headerlink" href="#branching" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>Create a feature branch from main:</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>feature/your-feature-name
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p>Make your changes</p></li>
+<li><p>Write tests for new functionality</p></li>
+<li><p>Ensure all tests pass</p></li>
+<li><p>Commit your changes with descriptive messages</p></li>
+</ol>
+</section>
+<section id="commit-messages">
+<h3>Commit Messages<a class="headerlink" href="#commit-messages" title="Link to this heading"></a></h3>
+<p>Follow conventional commit format:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>type(scope): description
+
+[optional body]
+
+[optional footer]
+</pre></div>
+</div>
+<p>Examples:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>feat(parser): add support for pip-tools requirements.in files
+
+fix(cli): handle missing requirements files gracefully
+
+docs: update installation instructions
+
+test(models): add tests for DependencySpec validation
+</pre></div>
+</div>
+<p>Types:
+- <code class="docutils literal notranslate"><span class="pre">feat</span></code>: New feature
+- <code class="docutils literal notranslate"><span class="pre">fix</span></code>: Bug fix
+- <code class="docutils literal notranslate"><span class="pre">docs</span></code>: Documentation changes
+- <code class="docutils literal notranslate"><span class="pre">test</span></code>: Test changes
+- <code class="docutils literal notranslate"><span class="pre">refactor</span></code>: Code refactoring
+- <code class="docutils literal notranslate"><span class="pre">perf</span></code>: Performance improvements
+- <code class="docutils literal notranslate"><span class="pre">ci</span></code>: CI/CD changes
+- <code class="docutils literal notranslate"><span class="pre">chore</span></code>: Maintenance tasks</p>
+</section>
+</section>
+<section id="code-style">
+<h2>Code Style<a class="headerlink" href="#code-style" title="Link to this heading"></a></h2>
+<section id="python-code">
+<h3>Python Code<a class="headerlink" href="#python-code" title="Link to this heading"></a></h3>
+<p>Follow PEP 8 and use the configured tools:</p>
+<ul class="simple">
+<li><p><strong>Black</strong>: Code formatting (88 character line length)</p></li>
+<li><p><strong>Ruff</strong>: Linting and import sorting</p></li>
+<li><p><strong>MyPy</strong>: Type checking</p></li>
+<li><p><strong>Pre-commit</strong>: Automated checks</p></li>
+</ul>
+<p>Configuration is in <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code>.</p>
+</section>
+<section id="documentation">
+<h3>Documentation<a class="headerlink" href="#documentation" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Use reStructuredText for Sphinx documentation</p></li>
+<li><p>Follow the existing documentation structure</p></li>
+<li><p>Include docstrings for all public functions and classes</p></li>
+<li><p>Use type hints for better documentation</p></li>
+</ul>
+</section>
+</section>
+<section id="testing">
+<h2>Testing<a class="headerlink" href="#testing" title="Link to this heading"></a></h2>
+<section id="test-structure">
+<h3>Test Structure<a class="headerlink" href="#test-structure" title="Link to this heading"></a></h3>
+<p>Tests are organized in the <code class="docutils literal notranslate"><span class="pre">tests/</span></code> directory:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>tests/
+├── test_models.py      # Tests for data models
+├── test_parsers.py     # Tests for parsers
+├── test_generators.py  # Tests for generators
+└── test_cli.py         # Tests for CLI
+</pre></div>
+</div>
+</section>
+<section id="writing-tests">
+<h3>Writing Tests<a class="headerlink" href="#writing-tests" title="Link to this heading"></a></h3>
+<p>Follow these guidelines:</p>
+<ul class="simple">
+<li><p>Use descriptive test names</p></li>
+<li><p>Test both success and failure cases</p></li>
+<li><p>Use fixtures for common test data</p></li>
+<li><p>Mock external dependencies</p></li>
+<li><p>Aim for high test coverage</p></li>
+</ul>
+<p>Example test:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">test_dependency_spec_creation</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test that DependencySpec can be created with valid data.&quot;&quot;&quot;</span>
+    <span class="n">dep</span> <span class="o">=</span> <span class="n">DependencySpec</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;requests&quot;</span><span class="p">,</span> <span class="n">version_specs</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;&gt;=2.25.0&quot;</span><span class="p">])</span>
+
+    <span class="k">assert</span> <span class="n">dep</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;requests&quot;</span>
+    <span class="k">assert</span> <span class="n">dep</span><span class="o">.</span><span class="n">version_specs</span> <span class="o">==</span> <span class="p">[</span><span class="s2">&quot;&gt;=2.25.0&quot;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">dep</span><span class="o">.</span><span class="n">extras</span> <span class="o">==</span> <span class="p">[]</span>
+    <span class="k">assert</span> <span class="n">dep</span><span class="o">.</span><span class="n">url</span> <span class="ow">is</span> <span class="kc">None</span>
+</pre></div>
+</div>
+</section>
+<section id="test-fixtures">
+<h3>Test Fixtures<a class="headerlink" href="#test-fixtures" title="Link to this heading"></a></h3>
+<p>Use pytest fixtures for common test data:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">sample_requirements_file</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a sample requirements.txt file for testing.&quot;&quot;&quot;</span>
+    <span class="n">req_file</span> <span class="o">=</span> <span class="n">tmp_path</span> <span class="o">/</span> <span class="s2">&quot;requirements.txt&quot;</span>
+    <span class="n">req_file</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="s2">&quot;requests&gt;=2.25.0</span><span class="se">\n</span><span class="s2">numpy&gt;=1.20.0</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">req_file</span>
+</pre></div>
+</div>
+</section>
+<section id="running-specific-tests">
+<h3>Running Specific Tests<a class="headerlink" href="#running-specific-tests" title="Link to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Run specific test</span>
+pytest<span class="w"> </span>tests/test_models.py::TestDependencySpec::test_basic_dependency
+
+<span class="c1"># Run tests matching pattern</span>
+pytest<span class="w"> </span>-k<span class="w"> </span><span class="s2">&quot;test_dependency&quot;</span>
+
+<span class="c1"># Run tests in specific file</span>
+pytest<span class="w"> </span>tests/test_models.py
+
+<span class="c1"># Run with coverage</span>
+pytest<span class="w"> </span>--cov<span class="o">=</span>depcon<span class="w"> </span>--cov-report<span class="o">=</span>html
+</pre></div>
+</div>
+</section>
+</section>
+<section id="pull-request-process">
+<h2>Pull Request Process<a class="headerlink" href="#pull-request-process" title="Link to this heading"></a></h2>
+<section id="before-submitting">
+<h3>Before Submitting<a class="headerlink" href="#before-submitting" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>Ensure all tests pass</p></li>
+<li><p>Run linting and formatting tools</p></li>
+<li><p>Update documentation if needed</p></li>
+<li><p>Add tests for new functionality</p></li>
+<li><p>Update changelog if applicable</p></li>
+</ol>
+</section>
+<section id="creating-a-pull-request">
+<h3>Creating a Pull Request<a class="headerlink" href="#creating-a-pull-request" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>Push your branch to your fork</p></li>
+<li><p>Create a pull request on GitHub</p></li>
+<li><p>Fill out the pull request template</p></li>
+<li><p>Link any related issues</p></li>
+<li><p>Request review from maintainers</p></li>
+</ol>
+</section>
+<section id="pull-request-template">
+<h3>Pull Request Template<a class="headerlink" href="#pull-request-template" title="Link to this heading"></a></h3>
+<p>Use this template for pull requests:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>## Description
+Brief description of changes
+
+## Type of Change
+- [ ] Bug fix
+- [ ] New feature
+- [ ] Breaking change
+- [ ] Documentation update
+
+## Testing
+- [ ] Tests pass locally
+- [ ] New tests added for new functionality
+- [ ] All existing tests still pass
+
+## Checklist
+- [ ] Code follows project style guidelines
+- [ ] Self-review completed
+- [ ] Documentation updated
+- [ ] Changelog updated (if applicable)
+</pre></div>
+</div>
+</section>
+</section>
+<section id="issue-reporting">
+<h2>Issue Reporting<a class="headerlink" href="#issue-reporting" title="Link to this heading"></a></h2>
+<section id="bug-reports">
+<h3>Bug Reports<a class="headerlink" href="#bug-reports" title="Link to this heading"></a></h3>
+<p>When reporting bugs, include:</p>
+<ul class="simple">
+<li><p>Python version</p></li>
+<li><p>depcon version</p></li>
+<li><p>Operating system</p></li>
+<li><p>Steps to reproduce</p></li>
+<li><p>Expected behavior</p></li>
+<li><p>Actual behavior</p></li>
+<li><p>Error messages/logs</p></li>
+</ul>
+</section>
+<section id="feature-requests">
+<h3>Feature Requests<a class="headerlink" href="#feature-requests" title="Link to this heading"></a></h3>
+<p>For feature requests, include:</p>
+<ul class="simple">
+<li><p>Use case description</p></li>
+<li><p>Proposed solution</p></li>
+<li><p>Alternative solutions considered</p></li>
+<li><p>Additional context</p></li>
+</ul>
+</section>
+</section>
+<section id="development-guidelines">
+<h2>Development Guidelines<a class="headerlink" href="#development-guidelines" title="Link to this heading"></a></h2>
+<section id="architecture">
+<h3>Architecture<a class="headerlink" href="#architecture" title="Link to this heading"></a></h3>
+<p>depcon follows a modular architecture:</p>
+<ul class="simple">
+<li><p><strong>models</strong>: Data structures and validation</p></li>
+<li><p><strong>parsers</strong>: Requirements file parsing</p></li>
+<li><p><strong>generators</strong>: PyProject.toml generation</p></li>
+<li><p><strong>cli</strong>: Command-line interface</p></li>
+</ul>
+</section>
+<section id="adding-new-features">
+<h3>Adding New Features<a class="headerlink" href="#adding-new-features" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>Design the feature</p></li>
+<li><p>Update data models if needed</p></li>
+<li><p>Implement parsing/generation logic</p></li>
+<li><p>Add CLI commands</p></li>
+<li><p>Write comprehensive tests</p></li>
+<li><p>Update documentation</p></li>
+</ol>
+</section>
+<section id="backward-compatibility">
+<h3>Backward Compatibility<a class="headerlink" href="#backward-compatibility" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Maintain backward compatibility when possible</p></li>
+<li><p>Use deprecation warnings for breaking changes</p></li>
+<li><p>Update version numbers appropriately</p></li>
+<li><p>Document migration paths</p></li>
+</ul>
+</section>
+<section id="performance">
+<h3>Performance<a class="headerlink" href="#performance" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Profile code for performance bottlenecks</p></li>
+<li><p>Use appropriate data structures</p></li>
+<li><p>Minimize I/O operations</p></li>
+<li><p>Cache expensive operations when possible</p></li>
+</ul>
+</section>
+<section id="security">
+<h3>Security<a class="headerlink" href="#security" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Validate all input data</p></li>
+<li><p>Sanitize file paths</p></li>
+<li><p>Handle errors gracefully</p></li>
+<li><p>Follow security best practices</p></li>
+</ul>
+</section>
+</section>
+<section id="release-process">
+<h2>Release Process<a class="headerlink" href="#release-process" title="Link to this heading"></a></h2>
+<section id="version-numbering">
+<h3>Version Numbering<a class="headerlink" href="#version-numbering" title="Link to this heading"></a></h3>
+<p>Follow semantic versioning (SemVer):</p>
+<ul class="simple">
+<li><p><strong>MAJOR</strong>: Breaking changes</p></li>
+<li><p><strong>MINOR</strong>: New features (backward compatible)</p></li>
+<li><p><strong>PATCH</strong>: Bug fixes (backward compatible)</p></li>
+</ul>
+</section>
+<section id="release-checklist">
+<h3>Release Checklist<a class="headerlink" href="#release-checklist" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>Update version in <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code></p></li>
+<li><p>Update <code class="docutils literal notranslate"><span class="pre">__version__</span></code> in <code class="docutils literal notranslate"><span class="pre">__init__.py</span></code></p></li>
+<li><p>Update changelog</p></li>
+<li><p>Run full test suite</p></li>
+<li><p>Build and test package</p></li>
+<li><p>Create release on GitHub</p></li>
+<li><p>Publish to PyPI</p></li>
+</ol>
+</section>
+</section>
+<section id="getting-help">
+<h2>Getting Help<a class="headerlink" href="#getting-help" title="Link to this heading"></a></h2>
+<p>If you need help:</p>
+<ol class="arabic simple">
+<li><p>Check the documentation</p></li>
+<li><p>Search existing issues</p></li>
+<li><p>Ask in discussions</p></li>
+<li><p>Create a new issue</p></li>
+</ol>
+</section>
+<section id="community-guidelines">
+<h2>Community Guidelines<a class="headerlink" href="#community-guidelines" title="Link to this heading"></a></h2>
+<section id="code-of-conduct">
+<h3>Code of Conduct<a class="headerlink" href="#code-of-conduct" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Be respectful and inclusive</p></li>
+<li><p>Focus on constructive feedback</p></li>
+<li><p>Help others learn and grow</p></li>
+<li><p>Follow the golden rule</p></li>
+</ul>
+</section>
+<section id="communication">
+<h3>Communication<a class="headerlink" href="#communication" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Use clear, descriptive language</p></li>
+<li><p>Provide context for questions</p></li>
+<li><p>Be patient with responses</p></li>
+<li><p>Help others when you can</p></li>
+</ul>
+</section>
+</section>
+<section id="recognition">
+<h2>Recognition<a class="headerlink" href="#recognition" title="Link to this heading"></a></h2>
+<p>Contributors are recognized in:</p>
+<ul class="simple">
+<li><p>CONTRIBUTORS.md file</p></li>
+<li><p>Release notes</p></li>
+<li><p>Project documentation</p></li>
+</ul>
+<p>Thank you for contributing to depcon! 🎉</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="examples.html" class="btn btn-neutral float-left" title="Examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="changelog.html" class="btn btn-neutral float-right" title="Changelog" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Lance Reinsmith.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        
+            <a href="changelog.html" class="btn btn-neutral float-right" title="Changelog" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        
+        
+            <a href="examples.html" class="btn btn-neutral" title="Examples" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        
+    </div>
+    <hr/>
+    <div role="contentinfo">
+        <p>
+                    &copy; Copyright 2024, Lance Reinsmith.
+                Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3 using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+        </p>
+    </div>
+
+
+</body>
+</html>
