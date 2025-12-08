@@ -6,11 +6,16 @@ This guide covers all the features and options available in depcon. It's organiz
 Commands Overview
 -----------------
 
-depcon provides three main commands:
+depcon provides several commands:
 
 * :ref:`convert-command` - Convert requirements files to pyproject.toml
 * :ref:`show-command` - Display dependencies from pyproject.toml
 * :ref:`validate-command` - Validate pyproject.toml dependencies
+* :ref:`list-command` - List all dependency groups
+* :ref:`check-command` - Check for common issues
+* ``export`` - Export dependencies to requirements.txt
+* ``diff`` - Show differences between files
+* ``sync`` - Sync dependencies to requirements files
 
 .. _convert-command:
 
@@ -68,7 +73,10 @@ Project Metadata
 * ``--project-name TEXT``: Project name (if creating new pyproject.toml)
 * ``--project-version TEXT``: Project version (if creating new pyproject.toml)
 * ``--project-description TEXT``: Project description (if creating new pyproject.toml)
-* ``--python-version TEXT``: Python version requirement (default: >=3.8)
+* ``--python-version TEXT``: Python version requirement (default: >=3.11)
+* ``--use-optional-deps / --use-dependency-groups``: Use optional-dependencies (PEP 621 extras) instead of dependency-groups (PEP 735)
+* ``--remove-duplicates / --keep-duplicates``: Remove duplicate dependencies across groups (default: remove)
+* ``--strict / --no-strict``: Strict mode: fail on parsing errors instead of warning
 
 General Options
 ^^^^^^^^^^^^^^^
@@ -135,6 +143,7 @@ Options
 
 * ``-f, --file PATH``: Path to pyproject.toml file (default: pyproject.toml)
 * ``--format [table|json|yaml]``: Output format (default: table)
+* ``--group TEXT``: Show only specific dependency group (main, dev, test, docs, or optional group name)
 
 Examples
 ~~~~~~~~
@@ -182,6 +191,7 @@ Options
 
 * ``-f, --file PATH``: Path to pyproject.toml file (default: pyproject.toml)
 * ``--group TEXT``: Dependency group to validate (main, dev, test, docs)
+* ``--check-pypi / --no-check-pypi``: Check if packages exist on PyPI
 
 Examples
 ~~~~~~~~
@@ -203,6 +213,76 @@ Validate specific file:
 .. code-block:: bash
 
    depcon validate -f my-project.toml
+
+.. _list-command:
+
+List Command
+------------
+
+The ``list`` command lists all dependency groups in a pyproject.toml file.
+
+Usage
+~~~~~
+
+.. code-block:: bash
+
+   depcon list [OPTIONS]
+
+Options
+~~~~~~~
+
+* ``-f, --file PATH``: Path to pyproject.toml file (default: pyproject.toml)
+
+Examples
+~~~~~~~~
+
+List all groups:
+
+.. code-block:: bash
+
+   depcon list
+
+List from specific file:
+
+.. code-block:: bash
+
+   depcon list -f my-project.toml
+
+.. _check-command:
+
+Check Command
+-------------
+
+The ``check`` command checks pyproject.toml for common issues.
+
+Usage
+~~~~~
+
+.. code-block:: bash
+
+   depcon check [OPTIONS]
+
+Options
+~~~~~~~
+
+* ``-f, --file PATH``: Path to pyproject.toml file (default: pyproject.toml)
+* ``--check-duplicates / --no-check-duplicates``: Check for duplicate dependencies (default: check)
+* ``--check-missing / --no-check-missing``: Check for missing optional dependencies
+
+Examples
+~~~~~~~~
+
+Check for issues:
+
+.. code-block:: bash
+
+   depcon check
+
+Check for duplicates:
+
+.. code-block:: bash
+
+   depcon check --check-duplicates
 
 Dependency Grouping
 -------------------

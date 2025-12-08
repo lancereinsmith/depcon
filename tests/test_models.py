@@ -187,6 +187,7 @@ class TestProjectConfig:
         assert config.requires_python == ">=3.8"
         assert config.dependencies == []
         assert config.optional_dependencies == {}
+        assert config.dependency_groups == {}
 
     def test_add_main_dependency(self):
         """Test adding main dependency."""
@@ -203,20 +204,31 @@ class TestProjectConfig:
         config = ProjectConfig(name="test-project")
         dep = DependencySpec(name="pytest", version_specs=[">=7.0.0"])
 
-        config.add_dependency(dep, group="dev")
+        config.add_dependency(dep, group="dev", use_dependency_groups=True)
 
-        assert "dev" in config.optional_dependencies
-        assert len(config.optional_dependencies["dev"].dependencies) == 1
-        assert config.optional_dependencies["dev"].dependencies[0] == dep
+        assert "dev" in config.dependency_groups
+        assert len(config.dependency_groups["dev"].dependencies) == 1
+        assert config.dependency_groups["dev"].dependencies[0] == dep
+
+    def test_add_optional_dependency_pep621(self):
+        """Test adding optional dependency as PEP 621 extra."""
+        config = ProjectConfig(name="test-project")
+        dep = DependencySpec(name="requests", version_specs=[">=2.25.0"], extras=["security"])
+
+        config.add_dependency(dep, group="security", use_dependency_groups=False)
+
+        assert "security" in config.optional_dependencies
+        assert len(config.optional_dependencies["security"].dependencies) == 1
+        assert config.optional_dependencies["security"].dependencies[0] == dep
 
     def test_get_dependency_group(self):
         """Test getting dependency group."""
         config = ProjectConfig(name="test-project")
         dep = DependencySpec(name="pytest", version_specs=[">=7.0.0"])
 
-        config.add_dependency(dep, group="dev")
+        config.add_dependency(dep, group="dev", use_dependency_groups=True)
 
-        group = config.get_dependency_group("dev")
+        group = config.get_dependency_group("dev", use_dependency_groups=True)
         assert group is not None
         assert group.name == "dev"
         assert len(group.dependencies) == 1
@@ -232,12 +244,30 @@ class TestProjectConfig:
         """Test creating new dependency group."""
         config = ProjectConfig(name="test-project")
 
-        group = config.create_dependency_group("test", "Test dependencies")
+        group = config.create_dependency_group("test", "Test dependencies", use_dependency_groups=True)
 
         assert group.name == "test"
         assert group.description == "Test dependencies"
-        assert "test" in config.optional_dependencies
-        assert config.optional_dependencies["test"] == group
+        assert "test" in config.dependency_groups
+        assert config.dependency_groups["test"] == group
+
+    def test_dependency_groups_vs_optional_dependencies(self):
+        """Test that dependency-groups and optional-dependencies are separate."""
+        config = ProjectConfig(name="test-project")
+        dep1 = DependencySpec(name="pytest", version_specs=[">=7.0.0"])
+        dep2 = DependencySpec(name="requests", version_specs=[">=2.25.0"])
+
+        # Add to dependency-groups
+        config.add_dependency(dep1, group="dev", use_dependency_groups=True)
+        # Add to optional-dependencies
+        config.add_dependency(dep2, group="dev", use_dependency_groups=False)
+
+        assert "dev" in config.dependency_groups
+        assert "dev" in config.optional_dependencies
+        assert len(config.dependency_groups["dev"].dependencies) == 1
+        assert len(config.optional_dependencies["dev"].dependencies) == 1
+        assert config.dependency_groups["dev"].dependencies[0].name == "pytest"
+        assert config.optional_dependencies["dev"].dependencies[0].name == "requests"
 
 
 class TestConversionOptions:

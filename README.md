@@ -13,14 +13,16 @@
 
 ## Features
 
-- **🔄 Full PEP 621 Support**: Complete support for the modern Python packaging standard
-- **📦 Intelligent Dependency Grouping**: Automatically categorizes dependencies into main, dev, test, and docs groups
-- **🔍 Advanced Parsing**: Handles complex requirements files including pip-tools, editable installs, and URLs
-- **✅ Validation**: Built-in dependency validation and error checking
-- **🎯 Multiple Build Backends**: Support for hatchling, setuptools, and poetry
-- **🛠️ Tool Integration**: Automatic configuration for uv, hatch, and other modern tools
-- **📊 Rich CLI**: Beautiful command-line interface with progress indicators and summaries
-- **🔧 Flexible Configuration**: Extensive options for customization and control
+- **Full PEP 621 & PEP 735 Support**: Complete support for modern Python packaging standards
+- **Intelligent Dependency Grouping**: Automatically categorizes dependencies into main, dev, test, and docs groups
+- **Proper Dependency Types**: Correctly distinguishes between dependency-groups (PEP 735) and optional-dependencies (PEP 621 extras)
+- **Advanced Parsing**: Handles complex requirements files including pip-tools, editable installs, and URLs
+- **Validation**: Built-in dependency validation and error checking
+- **Multiple Build Backends**: Support for hatchling, setuptools, and poetry
+- **Tool Integration**: Automatic configuration for uv, hatch, and other modern tools
+- **Rich CLI**: Beautiful command-line interface with progress indicators and summaries
+- **Flexible Configuration**: Extensive options for customization and control
+- **Export & Sync**: Export dependencies to requirements.txt and sync between formats
 
 ## Installation
 
@@ -74,7 +76,7 @@ depcon convert \
 
 ### `convert` - Convert requirements files to pyproject.toml
 
-The main command for converting requirements files.
+The main command for converting requirements files to modern pyproject.toml format with full PEP 621 and PEP 735 support.
 
 **Options:**
 
@@ -94,7 +96,10 @@ The main command for converting requirements files.
 - `--project-name TEXT`: Project name (if creating new pyproject.toml)
 - `--project-version TEXT`: Project version (if creating new pyproject.toml)
 - `--project-description TEXT`: Project description (if creating new pyproject.toml)
-- `--python-version TEXT`: Python version requirement (default: >=3.8)
+- `--python-version TEXT`: Python version requirement (default: >=3.11)
+- `--use-optional-deps / --use-dependency-groups`: Use optional-dependencies (PEP 621 extras) instead of dependency-groups (PEP 735)
+- `--remove-duplicates / --keep-duplicates`: Remove duplicate dependencies across groups (default: remove)
+- `--strict / --no-strict`: Strict mode: fail on parsing errors instead of warning
 - `-v, --verbose`: Enable verbose output
 
 ### `show` - Display dependencies from pyproject.toml
@@ -105,6 +110,7 @@ Show dependencies in a formatted table.
 
 - `-f, --file PATH`: Path to pyproject.toml file (default: pyproject.toml)
 - `--format [table|json|yaml]`: Output format (default: table)
+- `--group TEXT`: Show only specific dependency group (main, dev, test, docs, or optional group name)
 
 ### `validate` - Validate pyproject.toml dependencies
 
@@ -114,6 +120,56 @@ Validate that all dependencies are properly formatted.
 
 - `-f, --file PATH`: Path to pyproject.toml file (default: pyproject.toml)
 - `--group TEXT`: Dependency group to validate (main, dev, test, docs)
+- `--check-pypi / --no-check-pypi`: Check if packages exist on PyPI
+
+### `export` - Export dependencies to requirements.txt
+
+Export dependencies from pyproject.toml to requirements.txt format.
+
+**Options:**
+
+- `-f, --file PATH`: Path to pyproject.toml file (default: pyproject.toml)
+- `-o, --output PATH`: Output requirements.txt file path (default: requirements.txt)
+- `--group TEXT`: Dependency group to export (main, dev, test, docs, or all) (default: main)
+- `--include-hashes`: Include package hashes in output
+
+### `diff` - Show differences between files
+
+Show differences between pyproject.toml and requirements files.
+
+**Options:**
+
+- `-f, --file PATH`: Path to pyproject.toml file (default: pyproject.toml)
+- `-r, --requirements PATH`: Path to requirements.txt file to compare
+- `--group TEXT`: Dependency group to compare (main, dev, test, docs)
+
+### `sync` - Sync dependencies to requirements files
+
+Sync dependencies from pyproject.toml to requirements files.
+
+**Options:**
+
+- `-f, --file PATH`: Path to pyproject.toml file (default: pyproject.toml)
+- `--group TEXT`: Dependency groups to sync (can be specified multiple times, default: all)
+- `--dry-run`: Show what would be synced without making changes
+
+### `list` - List all dependency groups
+
+List all dependency groups in pyproject.toml.
+
+**Options:**
+
+- `-f, --file PATH`: Path to pyproject.toml file (default: pyproject.toml)
+
+### `check` - Check for common issues
+
+Check pyproject.toml for common issues like duplicate dependencies.
+
+**Options:**
+
+- `-f, --file PATH`: Path to pyproject.toml file (default: pyproject.toml)
+- `--check-duplicates / --no-check-duplicates`: Check for duplicate dependencies (default: check)
+- `--check-missing / --no-check-missing`: Check for missing optional dependencies
 
 ## Examples
 
@@ -178,9 +234,45 @@ depcon validate
 depcon validate --group dev
 ```
 
+### Exporting Dependencies
+
+```bash
+# Export main dependencies to requirements.txt
+depcon export
+
+# Export specific group
+depcon export --group dev -o requirements-dev.txt
+
+# Export all dependencies
+depcon export --group all -o requirements-all.txt
+```
+
+### Comparing Dependencies
+
+```bash
+# Show differences between pyproject.toml and requirements.txt
+depcon diff -r requirements.txt
+
+# Compare specific group
+depcon diff -r requirements-dev.txt --group dev
+```
+
+### Syncing Dependencies
+
+```bash
+# Sync all groups to requirements files
+depcon sync
+
+# Sync specific groups
+depcon sync --group dev --group test
+
+# Dry run to see what would be synced
+depcon sync --dry-run
+```
+
 ## Generated pyproject.toml Structure
 
-The tool generates modern `pyproject.toml` files following PEP 621 standards:
+The tool generates modern `pyproject.toml` files following PEP 621 and PEP 735 standards:
 
 ```toml
 [build-system]
@@ -191,25 +283,15 @@ build-backend = "hatchling.build"
 name = "my-project"
 version = "1.0.0"
 description = "A great Python project"
-requires-python = ">=3.8"
+requires-python = ">=3.11"
 dependencies = [
     "requests>=2.25.0",
     "numpy>=1.20.0",
 ]
 
 [project.optional-dependencies]
-dev = [
-    "pytest>=7.0.0",
-    "black>=23.0.0",
-    "ruff>=0.1.0",
-]
-test = [
-    "pytest>=7.0.0",
-    "pytest-cov>=4.0.0",
-]
-docs = [
-    "sphinx>=5.0.0",
-    "sphinx-rtd-theme>=1.0.0",
+security = [
+    "requests[security]>=2.25.0",
 ]
 
 [dependency-groups]
@@ -230,6 +312,12 @@ docs = [
 [tool.hatch.build.targets.wheel]
 packages = ["src"]
 ```
+
+### Understanding Dependency Types
+
+- **`dependencies`**: Core runtime dependencies required for the package
+- **`[project.optional-dependencies]`** (PEP 621): Installable extras (e.g., `pip install package[security]`)
+- **`[dependency-groups]`** (PEP 735): Development dependencies for tools like `uv` (not installable extras)
 
 ## Supported File Formats
 
@@ -253,6 +341,8 @@ The tool intelligently groups dependencies based on common patterns:
 
 ### uv Integration
 
+depcon uses `[dependency-groups]` (PEP 735) for uv, which is the modern standard:
+
 ```bash
 # Initialize project with uv
 uv init
@@ -260,8 +350,11 @@ uv init
 # Convert dependencies
 depcon convert -r requirements.txt
 
-# Sync dependencies
+# Sync dependencies with uv
 uv sync
+
+# Install specific dependency groups
+uv sync --group dev --group test
 ```
 
 ### Hatch Integration
@@ -331,7 +424,44 @@ depcon is licensed under the MIT License. See the LICENSE file for details.
 
 ## Changelog
 
-### v0.2.0 (Latest)
+### v0.4.0 (Latest)
+
+- New `list` command to list all dependency groups
+- New `check` command to check for common issues (duplicates, missing dependencies)
+- Enhanced `convert` command with `--use-optional-deps` flag to choose between dependency-groups and optional-dependencies
+- Enhanced `convert` command with `--remove-duplicates` flag
+- Enhanced `convert` command with `--strict` flag for strict error handling
+- Enhanced `show` command with `--group` option to filter by specific dependency group
+- Enhanced `validate` command with `--check-pypi` flag
+- Default Python version requirement updated to >=3.11
+- Improved duplicate dependency detection and removal
+- Better error messages and validation output
+
+### v0.3.0
+
+- Full PEP 735 support for dependency-groups
+- Proper distinction between dependency-groups (PEP 735) and optional-dependencies (PEP 621)
+- New `export` command to export dependencies to requirements.txt format
+- New `diff` command to compare dependencies between files
+- New `sync` command to sync dependencies from pyproject.toml to requirements files
+- Enhanced `show` command to display both dependency-groups and optional-dependencies
+- Improved validation for both dependency types
+- Updated documentation and examples
+- Better uv integration with modern dependency-groups format
+
+### v0.2.1
+
+- Initial release of depcon
+- Full PEP 621 support
+- Intelligent dependency grouping
+- Rich CLI interface
+- Multiple build backend support
+- Tool integration (uv, hatch, poetry)
+- Advanced validation
+- Comprehensive test suite
+
+### v0.2.0
+
 - Complete rewrite with modern architecture
 - Full PEP 621 support
 - Intelligent dependency grouping
@@ -341,5 +471,6 @@ depcon is licensed under the MIT License. See the LICENSE file for details.
 - Tool integration (uv, hatch, poetry)
 
 ### v0.1.x (Legacy)
+
 - Basic requirements.txt to pyproject.toml conversion
 - Limited feature set

@@ -124,7 +124,10 @@ class ProjectConfig(BaseModel):
         default_factory=list, description="Main dependencies"
     )
     optional_dependencies: Dict[str, DependencyGroup] = Field(
-        default_factory=dict, description="Optional dependency groups"
+        default_factory=dict, description="Optional dependency groups (PEP 621 extras)"
+    )
+    dependency_groups: Dict[str, DependencyGroup] = Field(
+        default_factory=dict, description="Dependency groups (PEP 735, for uv, etc.)"
     )
 
     # Build system
@@ -141,12 +144,29 @@ class ProjectConfig(BaseModel):
         default_factory=dict, description="Tool-specific configurations"
     )
 
-    def add_dependency(self, dep: DependencySpec, group: Optional[str] = None) -> None:
-        """Add a dependency to the project."""
+    def add_dependency(
+        self,
+        dep: DependencySpec,
+        group: Optional[str] = None,
+        use_dependency_groups: bool = True,
+    ) -> None:
+        """Add a dependency to the project.
+        
+        Args:
+            dep: The dependency to add
+            group: Optional group name (dev, test, docs, etc.)
+            use_dependency_groups: If True, use dependency-groups (PEP 735),
+                otherwise use optional-dependencies (PEP 621 extras)
+        """
         if group:
-            if group not in self.optional_dependencies:
-                self.optional_dependencies[group] = DependencyGroup(name=group)
-            self.optional_dependencies[group].add_dependency(dep)
+            if use_dependency_groups:
+                target_dict = self.dependency_groups
+            else:
+                target_dict = self.optional_dependencies
+                
+            if group not in target_dict:
+                target_dict[group] = DependencyGroup(name=group)
+            target_dict[group].add_dependency(dep)
         else:
             # Check if dependency already exists and update if needed
             for i, existing in enumerate(self.dependencies):
@@ -155,16 +175,39 @@ class ProjectConfig(BaseModel):
                     return
             self.dependencies.append(dep)
 
-    def get_dependency_group(self, name: str) -> Optional[DependencyGroup]:
-        """Get a dependency group by name."""
+    def get_dependency_group(
+        self, name: str, use_dependency_groups: bool = True
+    ) -> Optional[DependencyGroup]:
+        """Get a dependency group by name.
+        
+        Args:
+            name: Group name
+            use_dependency_groups: If True, check dependency-groups,
+                otherwise check optional-dependencies
+        """
+        if use_dependency_groups:
+            return self.dependency_groups.get(name)
         return self.optional_dependencies.get(name)
 
     def create_dependency_group(
-        self, name: str, description: Optional[str] = None
+        self,
+        name: str,
+        description: Optional[str] = None,
+        use_dependency_groups: bool = True,
     ) -> DependencyGroup:
-        """Create a new dependency group."""
+        """Create a new dependency group.
+        
+        Args:
+            name: Group name
+            description: Optional description
+            use_dependency_groups: If True, create in dependency-groups,
+                otherwise in optional-dependencies
+        """
         group = DependencyGroup(name=name, description=description)
-        self.optional_dependencies[name] = group
+        if use_dependency_groups:
+            self.dependency_groups[name] = group
+        else:
+            self.optional_dependencies[name] = group
         return group
 
 

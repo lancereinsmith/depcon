@@ -13,26 +13,30 @@ This guide covers everything you need to know to contribute to depcon developmen
 ### Setup
 
 1. **Fork and clone the repository:**
+
    ```bash
    git clone https://github.com/your-username/depcon.git
    cd depcon
    ```
 
 2. **Install in development mode:**
+
    ```bash
    # Using uv (recommended)
    uv pip install -e ".[dev]"
-   
+
    # Or using pip
    pip install -e ".[dev]"
    ```
 
 3. **Install pre-commit hooks:**
+
    ```bash
    pre-commit install
    ```
 
 4. **Verify installation:**
+
    ```bash
    depcon --version
    pytest
@@ -151,20 +155,22 @@ pytest -n auto
 Follow these guidelines:
 
 1. **Test structure:**
+
    ```python
    def test_function_name():
        """Test description."""
        # Arrange
        input_data = "test"
-       
+
        # Act
        result = function_under_test(input_data)
-       
+
        # Assert
        assert result == expected_output
    ```
 
 2. **Use fixtures for common data:**
+
    ```python
    @pytest.fixture
    def sample_requirements_file(tmp_path):
@@ -175,11 +181,12 @@ Follow these guidelines:
    ```
 
 3. **Test both success and failure cases:**
+
    ```python
    def test_valid_input():
        """Test with valid input."""
        assert function("valid") == expected
-   
+
    def test_invalid_input():
        """Test with invalid input."""
        with pytest.raises(ValueError):
@@ -226,17 +233,20 @@ open _build/html/index.html
 ### Branching
 
 1. **Create feature branch:**
+
    ```bash
    git checkout -b feature/your-feature-name
    ```
 
 2. **Make changes and commit:**
+
    ```bash
    git add .
    git commit -m "feat: add new feature"
    ```
 
 3. **Push and create PR:**
+
    ```bash
    git push origin feature/your-feature-name
    ```
@@ -245,7 +255,7 @@ open _build/html/index.html
 
 Follow conventional commits:
 
-```
+```text
 type(scope): description
 
 [optional body]
@@ -254,6 +264,7 @@ type(scope): description
 ```
 
 Types:
+
 - `feat`: New feature
 - `fix`: Bug fix
 - `docs`: Documentation changes
@@ -264,7 +275,8 @@ Types:
 - `chore`: Maintenance tasks
 
 Examples:
-```
+
+```text
 feat(parser): add support for pip-tools requirements.in files
 
 fix(cli): handle missing requirements files gracefully
@@ -297,6 +309,7 @@ docs: update installation instructions
 ### Common Issues
 
 **Import Errors:**
+
 ```bash
 # Ensure package is installed in dev mode
 uv pip install -e ".[dev]"
@@ -306,6 +319,7 @@ python -c "import sys; print(sys.path)"
 ```
 
 **Test Failures:**
+
 ```bash
 # Run with verbose output
 pytest -v -s
@@ -315,6 +329,7 @@ pytest -v -s tests/test_specific.py::test_function
 ```
 
 **Linting Errors:**
+
 ```bash
 # Fix auto-fixable issues
 ruff check src/ --fix
@@ -326,16 +341,19 @@ ruff check src/specific_file.py
 ### Debugging Tools
 
 **pdb:**
+
 ```python
 import pdb; pdb.set_trace()
 ```
 
 **ipdb:**
+
 ```python
 import ipdb; ipdb.set_trace()
 ```
 
 **VS Code Debugger:**
+
 - Set breakpoints in code
 - Use "Debug Python File" option
 

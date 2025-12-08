@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "depcon"
-version = "0.2.1"
+version = "0.4.0"
 description = "Convert legacy requirements files to modern pyproject.toml format with full PEP 621 support"
 readme = "README.md"
 requires-python = ">=3.11"

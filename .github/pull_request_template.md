@@ -1,7 +1,9 @@
 ## Description
+
 Brief description of changes made in this PR.
 
 ## Type of Change
+
 - [ ] Bug fix (non-breaking change which fixes an issue)
 - [ ] New feature (non-breaking change which adds functionality)
 - [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
@@ -12,17 +14,20 @@ Brief description of changes made in this PR.
 - [ ] CI/CD changes
 
 ## Related Issues
+
 Fixes #(issue number)
 Closes #(issue number)
 Related to #(issue number)
 
 ## Changes Made
+
 - [ ] List specific changes made
 - [ ] Include any new features added
 - [ ] Mention any breaking changes
 - [ ] Note any dependencies added/removed
 
 ## Testing
+
 - [ ] Tests pass locally
 - [ ] New tests added for new functionality
 - [ ] All existing tests still pass
@@ -30,6 +35,7 @@ Related to #(issue number)
 - [ ] Edge cases tested
 
 ## Documentation
+
 - [ ] Documentation updated for new features
 - [ ] API documentation updated
 - [ ] README updated if needed
@@ -37,6 +43,7 @@ Related to #(issue number)
 - [ ] Comments added to code
 
 ## Code Quality
+
 - [ ] Code follows project style guidelines
 - [ ] Self-review completed
 - [ ] Code is properly commented
@@ -45,18 +52,21 @@ Related to #(issue number)
 - [ ] Type hints added where appropriate
 
 ## Performance
+
 - [ ] No performance regressions
 - [ ] Performance improvements documented
 - [ ] Memory usage considered
 - [ ] Large files handled appropriately
 
 ## Security
+
 - [ ] No security vulnerabilities introduced
 - [ ] Input validation implemented
 - [ ] Sensitive data handled properly
 - [ ] Dependencies are secure
 
 ## Checklist
+
 - [ ] My code follows the style guidelines of this project
 - [ ] I have performed a self-review of my own code
 - [ ] I have commented my code, particularly in hard-to-understand areas
@@ -67,25 +77,31 @@ Related to #(issue number)
 - [ ] Any dependent changes have been merged and published
 
 ## Screenshots
+
 If applicable, add screenshots to help explain your changes.
 
 ## Additional Notes
+
 Any additional information that reviewers should know about this PR.
 
 ## Breaking Changes
+
 If this is a breaking change, describe what breaks and how to migrate:
 
 **Before:**
+
 ```python
 # Old code
 ```
 
 **After:**
+
 ```python
 # New code
 ```
 
 **Migration:**
+
 ```python
 # How to migrate
 ```

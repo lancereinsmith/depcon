@@ -5,6 +5,7 @@ We thank all the contributors who have helped make depcon better!
 ## Core Contributors
 
 ### Lance Reinsmith
+
 - **Role**: Project Maintainer
 - **GitHub**: [@lancereinsmith](https://github.com/lancereinsmith)
 - **Contributions**: Project creator, core development, documentation, CI/CD
@@ -47,6 +48,7 @@ We welcome contributions from the community! Here's how you can help:
 ### Recognition
 
 Contributors are recognized in:
+
 - This CONTRIBUTORS.md file
 - Release notes
 - Project documentation
@@ -63,6 +65,7 @@ By contributing to depcon, you agree that your contributions will be licensed un
 ## Questions?
 
 If you have questions about contributing, please:
+
 - Check the [Contributing Guide](docs/contributing.rst)
 - Open a discussion
 - Contact the maintainers

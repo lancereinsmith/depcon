@@ -33,6 +33,7 @@ Add any other context or screenshots about the feature request here.
 If you have ideas about how this could be implemented, please share them.
 
 **Checklist**
+
 - [ ] I have searched existing issues to ensure this is not a duplicate
 - [ ] I have provided a clear description of the feature
 - [ ] I have considered the use case and alternatives

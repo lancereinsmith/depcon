@@ -56,7 +56,7 @@ class PyProjectGenerator:
                 dep.to_pep621_string() for dep in self.config.dependencies
             ]
 
-        # Optional dependencies (PEP 621 extras)
+        # Optional dependencies (PEP 621 extras - installable features)
         if self.config.optional_dependencies:
             project["optional-dependencies"] = {}
             for group_name, group in self.config.optional_dependencies.items():
@@ -66,10 +66,10 @@ class PyProjectGenerator:
 
         content["project"] = project
 
-        # uv dependency-groups (preferred over deprecated tool.uv.dev-dependencies)
-        if self.config.optional_dependencies:
+        # Dependency groups (PEP 735 - for uv, etc., not installable extras)
+        if self.config.dependency_groups:
             content["dependency-groups"] = {}
-            for group_name, group in self.config.optional_dependencies.items():
+            for group_name, group in self.config.dependency_groups.items():
                 content["dependency-groups"][group_name] = [
                     dep.to_pep621_string() for dep in group.dependencies
                 ]
@@ -247,8 +247,18 @@ class PyProjectUpdater:
         dev_deps: List[DependencySpec],
         test_deps: List[DependencySpec],
         docs_deps: List[DependencySpec],
+        use_dependency_groups: bool = True,
     ) -> None:
-        """Update pyproject.toml with new dependencies."""
+        """Update pyproject.toml with new dependencies.
+        
+        Args:
+            main_deps: Main runtime dependencies
+            dev_deps: Development dependencies
+            test_deps: Test dependencies
+            docs_deps: Documentation dependencies
+            use_dependency_groups: If True, use dependency-groups (PEP 735),
+                otherwise use optional-dependencies (PEP 621 extras)
+        """
         # Load existing configuration
         config = self._load_existing_config()
 
@@ -260,10 +270,14 @@ class PyProjectUpdater:
 
         # Merge development dependencies
         if dev_deps:
-            dev_group = config.get_dependency_group(self.options.dev_group_name)
+            dev_group = config.get_dependency_group(
+                self.options.dev_group_name, use_dependency_groups=use_dependency_groups
+            )
             if not dev_group:
                 dev_group = config.create_dependency_group(
-                    self.options.dev_group_name, "Development dependencies"
+                    self.options.dev_group_name,
+                    "Development dependencies",
+                    use_dependency_groups=use_dependency_groups,
                 )
 
             existing_dev_deps = dev_group.dependencies
@@ -273,10 +287,14 @@ class PyProjectUpdater:
 
         # Merge test dependencies
         if test_deps:
-            test_group = config.get_dependency_group(self.options.test_group_name)
+            test_group = config.get_dependency_group(
+                self.options.test_group_name, use_dependency_groups=use_dependency_groups
+            )
             if not test_group:
                 test_group = config.create_dependency_group(
-                    self.options.test_group_name, "Test dependencies"
+                    self.options.test_group_name,
+                    "Test dependencies",
+                    use_dependency_groups=use_dependency_groups,
                 )
 
             existing_test_deps = test_group.dependencies
@@ -286,10 +304,14 @@ class PyProjectUpdater:
 
         # Merge documentation dependencies
         if docs_deps:
-            docs_group = config.get_dependency_group(self.options.docs_group_name)
+            docs_group = config.get_dependency_group(
+                self.options.docs_group_name, use_dependency_groups=use_dependency_groups
+            )
             if not docs_group:
                 docs_group = config.create_dependency_group(
-                    self.options.docs_group_name, "Documentation dependencies"
+                    self.options.docs_group_name,
+                    "Documentation dependencies",
+                    use_dependency_groups=use_dependency_groups,
                 )
 
             existing_docs_deps = docs_group.dependencies
@@ -378,7 +400,7 @@ class PyProjectUpdater:
                     # Skip invalid dependencies
                     continue
 
-        # Extract optional dependencies
+        # Extract optional dependencies (PEP 621 extras)
         if "optional-dependencies" in project_data:
             for group_name, deps in project_data["optional-dependencies"].items():
                 group = DependencyGroup(name=group_name)
@@ -402,6 +424,31 @@ class PyProjectUpdater:
                         # Skip invalid dependencies
                         continue
                 config.optional_dependencies[group_name] = group
+
+        # Extract dependency groups (PEP 735)
+        if "dependency-groups" in data:
+            for group_name, deps in data["dependency-groups"].items():
+                group = DependencyGroup(name=group_name)
+                for dep_str in deps:
+                    try:
+                        from packaging.requirements import Requirement
+
+                        req = Requirement(dep_str)
+                        dep = DependencySpec(
+                            name=req.name,
+                            version_specs=(
+                                [str(spec) for spec in req.specifier]
+                                if req.specifier
+                                else []
+                            ),
+                            extras=list(req.extras),
+                            markers=str(req.marker) if req.marker else None,
+                        )
+                        group.add_dependency(dep)
+                    except Exception:
+                        # Skip invalid dependencies
+                        continue
+                config.dependency_groups[group_name] = group
 
         # Extract tool configurations
         if "tool" in data:
@@ -496,7 +543,7 @@ class PyProjectUpdater:
                         lines.append(f'{key} = "{value}"')
                 lines.append("")
 
-        # Write dependency-groups (uv modern config)
+        # Write dependency-groups (PEP 735 - uv modern config)
         if "dependency-groups" in content and content["dependency-groups"]:
             lines.append("[dependency-groups]")
             for group_name, deps in content["dependency-groups"].items():
