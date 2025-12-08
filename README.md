@@ -424,7 +424,13 @@ depcon is licensed under the MIT License. See the LICENSE file for details.
 
 ## Changelog
 
-### v0.4.0 (Latest)
+### v0.4.1 (Latest)
+
+- Fixed broken LICENSE link in documentation
+- Fixed GitHub Actions workflows to use dependency-groups correctly
+- Improved dependency group nesting using PEP 735 `include-group` syntax
+
+### v0.4.0
 
 - New `list` command to list all dependency groups
 - New `check` command to check for common issues (duplicates, missing dependencies)

@@ -18,7 +18,7 @@ console = Console()
 
 
 @click.group()
-@click.version_option(version="0.4.0")
+@click.version_option(version="0.4.1")
 def main():
     """Convert legacy requirements files to modern pyproject.toml format."""
     pass

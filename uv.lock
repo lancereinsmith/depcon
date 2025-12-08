@@ -246,47 +246,25 @@ dependencies = [
     { name = "tomli-w" },
 ]
 
-[package.optional-dependencies]
-all = [
-    { name = "black" },
-    { name = "mypy" },
-    { name = "myst-parser" },
-    { name = "pytest" },
-    { name = "pytest-cov" },
-    { name = "pytest-mock" },
-    { name = "ruff" },
-    { name = "sphinx" },
-    { name = "sphinx-autodoc-typehints" },
-    { name = "sphinx-rtd-theme" },
-]
-dev = [
-    { name = "black" },
-    { name = "mypy" },
-    { name = "pytest" },
-    { name = "pytest-cov" },
-    { name = "ruff" },
-]
-docs = [
-    { name = "myst-parser" },
-    { name = "sphinx" },
-    { name = "sphinx-autodoc-typehints" },
-    { name = "sphinx-rtd-theme" },
-]
-test = [
-    { name = "pytest" },
-    { name = "pytest-cov" },
-    { name = "pytest-mock" },
-]
-
 [package.dev-dependencies]
 all = [
-    { name = "depcon", extra = ["dev", "docs", "test"] },
+    { name = "black" },
+    { name = "mypy" },
+    { name = "myst-parser" },
+    { name = "pytest" },
+    { name = "pytest-cov" },
+    { name = "pytest-mock" },
+    { name = "ruff" },
+    { name = "sphinx" },
+    { name = "sphinx-autodoc-typehints" },
+    { name = "sphinx-rtd-theme" },
 ]
 dev = [
     { name = "black" },
     { name = "mypy" },
     { name = "pytest" },
     { name = "pytest-cov" },
+    { name = "pytest-mock" },
     { name = "ruff" },
 ]
 docs = [
@@ -303,44 +281,33 @@ test = [
 
 [package.metadata]
 requires-dist = [
-    { name = "black", marker = "extra == 'all'", specifier = ">=25.9.0" },
-    { name = "black", marker = "extra == 'dev'", specifier = ">=25.9.0" },
     { name = "click", specifier = ">=8.3.0" },
-    { name = "mypy", marker = "extra == 'all'", specifier = ">=1.18.2" },
-    { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.18.2" },
-    { name = "myst-parser", marker = "extra == 'all'", specifier = ">=4.0.1" },
-    { name = "myst-parser", marker = "extra == 'docs'", specifier = ">=4.0.1" },
     { name = "packaging", specifier = ">=21.0" },
     { name = "pydantic", specifier = ">=2.11.10" },
-    { name = "pytest", marker = "extra == 'all'", specifier = ">=8.4.2" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.4.2" },
-    { name = "pytest", marker = "extra == 'test'", specifier = ">=8.4.2" },
-    { name = "pytest-cov", marker = "extra == 'all'", specifier = ">=7.0.0" },
-    { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=7.0.0" },
-    { name = "pytest-cov", marker = "extra == 'test'", specifier = ">=7.0.0" },
-    { name = "pytest-mock", marker = "extra == 'all'", specifier = ">=3.15.1" },
-    { name = "pytest-mock", marker = "extra == 'test'", specifier = ">=3.15.1" },
     { name = "rich", specifier = ">=13.0.0" },
-    { name = "ruff", marker = "extra == 'all'", specifier = ">=0.1.0" },
-    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.1.0" },
-    { name = "sphinx", marker = "extra == 'all'", specifier = ">=8.2.3" },
-    { name = "sphinx", marker = "extra == 'docs'", specifier = ">=8.2.3" },
-    { name = "sphinx-autodoc-typehints", marker = "extra == 'all'", specifier = ">=3.2.0" },
-    { name = "sphinx-autodoc-typehints", marker = "extra == 'docs'", specifier = ">=3.2.0" },
-    { name = "sphinx-rtd-theme", marker = "extra == 'all'", specifier = ">=3.0.2" },
-    { name = "sphinx-rtd-theme", marker = "extra == 'docs'", specifier = ">=1.0.0" },
     { name = "tomli", specifier = ">=2.0.0" },
     { name = "tomli-w", specifier = ">=1.2.0" },
 ]
-provides-extras = ["dev", "test", "docs", "all"]
 
 [package.metadata.requires-dev]
-all = [{ name = "depcon", extras = ["dev", "test", "docs"] }]
+all = [
+    { name = "black", specifier = ">=25.9.0" },
+    { name = "mypy", specifier = ">=1.18.2" },
+    { name = "myst-parser", specifier = ">=4.0.1" },
+    { name = "pytest", specifier = ">=8.4.2" },
+    { name = "pytest-cov", specifier = ">=7.0.0" },
+    { name = "pytest-mock", specifier = ">=3.15.1" },
+    { name = "ruff", specifier = ">=0.1.0" },
+    { name = "sphinx", specifier = ">=8.2.3" },
+    { name = "sphinx-autodoc-typehints", specifier = ">=3.2.0" },
+    { name = "sphinx-rtd-theme", specifier = ">=3.0.2" },
+]
 dev = [
     { name = "black", specifier = ">=25.9.0" },
     { name = "mypy", specifier = ">=1.18.2" },
     { name = "pytest", specifier = ">=8.4.2" },
     { name = "pytest-cov", specifier = ">=7.0.0" },
+    { name = "pytest-mock", specifier = ">=3.15.1" },
     { name = "ruff", specifier = ">=0.1.0" },
 ]
 docs = [

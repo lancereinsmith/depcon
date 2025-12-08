@@ -9,7 +9,17 @@ and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0
 [Unreleased]
 ------------
 
-[0.4.0] - 2024-12-XX
+[0.4.1] - 2025-12-08
+---------------------
+
+Fixed
+~~~~~
+
+* Fixed broken LICENSE link in documentation
+* Fixed GitHub Actions workflows to use dependency-groups correctly
+* Improved dependency group nesting using PEP 735 `include-group` syntax
+
+[0.4.0] - 2025-12-08
 ---------------------
 
 Added
@@ -41,7 +51,7 @@ Fixed
 * Improved error handling in various commands
 * Better validation of dependency specifications
 
-[0.3.0] - 2024-12-XX
+[0.3.0] - 2025-12-08
 ---------------------
 
 Added
@@ -71,7 +81,7 @@ Fixed
 * Fixed handling of dependency-groups vs optional-dependencies in pyproject.toml
 * Improved parsing of both dependency types from existing pyproject.toml files
 
-[0.2.1] - 2024-01-XX
+[0.2.1] - 2025-10-15
 ---------------------
 
 Added
@@ -86,7 +96,7 @@ Added
 * Advanced validation
 * Comprehensive test suite
 
-[0.2.0] - 2024-01-XX
+[0.2.0] - 2025-10-15
 ---------------------
 
 Added
@@ -107,7 +117,7 @@ Changed
 * Improved error handling
 * Enhanced user experience
 
-[0.1.x] - 2024-01-XX
+[0.1.x] - 2024-12-12
 --------------------
 
 Added

@@ -8,7 +8,7 @@ from .cli import main
 from .models import ConversionOptions, DependencySpec, ProjectConfig
 from .parsers import parse_requirements_file
 
-__version__ = "0.4.0"
+__version__ = "0.4.1"
 __all__ = [
     "main",
     "ConversionOptions",
