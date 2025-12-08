@@ -33,30 +33,36 @@ jobs:
         
     - name: Debug environment
       run: |
+        source .venv/bin/activate
         python --version
         uv --version
         pip list | grep -E "(pytest|coverage|depcon)"
         
     - name: Test package installation
       run: |
+        source .venv/bin/activate
         depcon --version
         depcon --help
 
     - name: Run linting
       run: |
+        source .venv/bin/activate
         ruff check src/ tests/ || echo "Ruff linting failed, but continuing..."
         black --check src/ tests/ || echo "Black formatting check failed, but continuing..."
 
     - name: Run type checking
       run: |
+        source .venv/bin/activate
         mypy src/ || echo "Type checking failed, but continuing..."
 
     - name: Run tests without coverage
       run: |
+        source .venv/bin/activate
         pytest -v
         
     - name: Run tests with coverage
       run: |
+        source .venv/bin/activate
         pytest --cov=depcon --cov-report=xml --cov-report=term-missing -v
 
     - name: Upload coverage to Codecov
@@ -121,6 +127,7 @@ jobs:
 
     - name: Run security checks
       run: |
+        source .venv/bin/activate
         # Install safety for security checks
         uv pip install safety
         safety check
@@ -144,10 +151,11 @@ jobs:
 
     - name: Install depcon
       run: |
-        uv pip install -e "."
+        uv sync
 
     - name: Test basic functionality
       run: |
+        source .venv/bin/activate
         # Test help command
         depcon --help
         
@@ -162,6 +170,7 @@ jobs:
 
     - name: Test with example requirements
       run: |
+        source .venv/bin/activate
         # Create test requirements file
         echo "requests>=2.25.0" > test-requirements.txt
         echo "numpy>=1.20.0" >> test-requirements.txt
