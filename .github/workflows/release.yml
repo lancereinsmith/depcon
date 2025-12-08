@@ -21,11 +21,6 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: "3.11"
-
     - name: Install uv
       uses: astral-sh/setup-uv@v2
       with:
@@ -33,11 +28,11 @@ jobs:
 
     - name: Install dependencies
       run: |
-        uv sync --group dev
+        uv sync --group dev --group test
 
     - name: Run tests
       run: |
-        pytest
+        uv run pytest
 
     - name: Build package
       run: |
@@ -45,8 +40,7 @@ jobs:
 
     - name: Check package
       run: |
-        uv pip install dist/*.whl
-        depcon --version
+        uv run depcon --version
 
     - name: Create Release
       uses: softprops/action-gh-release@v1

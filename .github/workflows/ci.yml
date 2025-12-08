@@ -17,53 +17,43 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ matrix.python-version }}
-
     - name: Install uv
       uses: astral-sh/setup-uv@v2
       with:
         version: "latest"
 
-    - name: Install dependencies
+    - name: Install Python and dependencies
       run: |
+        uv python install ${{ matrix.python-version }}
         uv sync --group dev --group test
-        
+
     - name: Debug environment
       run: |
-        source .venv/bin/activate
-        python --version
+        uv run python --version
         uv --version
-        pip list | grep -E "(pytest|coverage|depcon)"
-        
+        uv run pip list | grep -E "(pytest|coverage|depcon)"
+
     - name: Test package installation
       run: |
-        source .venv/bin/activate
-        depcon --version
-        depcon --help
+        uv run depcon --version
+        uv run depcon --help
 
     - name: Run linting
       run: |
-        source .venv/bin/activate
-        ruff check src/ tests/ || echo "Ruff linting failed, but continuing..."
-        black --check src/ tests/ || echo "Black formatting check failed, but continuing..."
+        uv run ruff check src/ tests/ || echo "Ruff linting failed, but continuing..."
+        uv run black --check src/ tests/ || echo "Black formatting check failed, but continuing..."
 
     - name: Run type checking
       run: |
-        source .venv/bin/activate
-        mypy src/ || echo "Type checking failed, but continuing..."
+        uv run mypy src/ || echo "Type checking failed, but continuing..."
 
     - name: Run tests without coverage
       run: |
-        source .venv/bin/activate
-        pytest -v
-        
+        uv run pytest -v
+
     - name: Run tests with coverage
       run: |
-        source .venv/bin/activate
-        pytest --cov=depcon --cov-report=xml --cov-report=term-missing -v
+        uv run pytest --cov=depcon --cov-report=xml --cov-report=term-missing -v
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v4
@@ -79,11 +69,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: "3.11"
 
     - name: Install uv
       uses: astral-sh/setup-uv@v2
@@ -111,11 +96,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: "3.11"
-
     - name: Install uv
       uses: astral-sh/setup-uv@v2
       with:
@@ -127,10 +107,8 @@ jobs:
 
     - name: Run security checks
       run: |
-        source .venv/bin/activate
-        # Install safety for security checks
         uv pip install safety
-        safety check
+        uv run safety check
 
   integration:
     runs-on: ubuntu-latest
@@ -138,11 +116,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: "3.11"
 
     - name: Install uv
       uses: astral-sh/setup-uv@v2
@@ -155,34 +128,18 @@ jobs:
 
     - name: Test basic functionality
       run: |
-        source .venv/bin/activate
-        # Test help command
-        depcon --help
-        
-        # Test convert help
-        depcon convert --help
-        
-        # Test show help
-        depcon show --help
-        
-        # Test validate help
-        depcon validate --help
+        uv run depcon --help
+        uv run depcon convert --help
+        uv run depcon show --help
+        uv run depcon validate --help
 
     - name: Test with example requirements
       run: |
-        source .venv/bin/activate
-        # Create test requirements file
         echo "requests>=2.25.0" > test-requirements.txt
         echo "numpy>=1.20.0" >> test-requirements.txt
         
-        # Test conversion
-        depcon convert -r test-requirements.txt --project-name "test-project" --verbose
+        uv run depcon convert -r test-requirements.txt --project-name "test-project" --verbose
+        uv run depcon show
+        uv run depcon validate
         
-        # Test show
-        depcon show
-        
-        # Test validate
-        depcon validate
-        
-        # Clean up
         rm test-requirements.txt

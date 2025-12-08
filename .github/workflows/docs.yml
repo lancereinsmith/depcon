@@ -14,11 +14,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: "3.11"
-
     - name: Install uv
       uses: astral-sh/setup-uv@v2
       with:
@@ -30,15 +25,13 @@ jobs:
 
     - name: Build documentation
       run: |
-        source .venv/bin/activate
         cd docs
-        make html
+        uv run make html
 
     - name: Check for broken links
       run: |
-        source .venv/bin/activate
         cd docs
-        make linkcheck
+        uv run make linkcheck
 
     - name: Upload documentation artifacts
       uses: actions/upload-artifact@v4
@@ -73,11 +66,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: "3.11"
-
     - name: Install uv
       uses: astral-sh/setup-uv@v2
       with:
@@ -89,31 +77,28 @@ jobs:
 
     - name: Build documentation
       run: |
-        source .venv/bin/activate
         cd docs
-        make html
+        uv run make html
 
     - name: Comment PR with docs preview
       uses: actions/github-script@v6
       with:
         script: |
           const fs = require('fs');
-          const path = require('path');
           
-          // Check if docs built successfully
           const docsPath = 'docs/_build/html/index.html';
           if (fs.existsSync(docsPath)) {
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: '📚 Documentation built successfully! You can preview the changes locally by running `make html` in the docs directory.'
+              body: 'Documentation built successfully! You can preview the changes locally by running `make html` in the docs directory.'
             });
           } else {
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: '❌ Documentation build failed. Please check the logs for errors.'
+              body: 'Documentation build failed. Please check the logs for errors.'
             });
           }
