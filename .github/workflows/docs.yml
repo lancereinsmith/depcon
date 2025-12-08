@@ -30,11 +30,13 @@ jobs:
 
     - name: Build documentation
       run: |
+        source .venv/bin/activate
         cd docs
         make html
 
     - name: Check for broken links
       run: |
+        source .venv/bin/activate
         cd docs
         make linkcheck
 
@@ -87,6 +89,7 @@ jobs:
 
     - name: Build documentation
       run: |
+        source .venv/bin/activate
         cd docs
         make html
 
