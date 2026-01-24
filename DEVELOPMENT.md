@@ -288,12 +288,11 @@ docs: update installation instructions
 
 ### Version Bumping
 
-1. Update version in `pyproject.toml`
-2. Update `__version__` in `__init__.py`
-3. Update changelog
-4. Create release commit
-5. Tag release
-6. Push tags
+1. Update version in `pyproject.toml` (single source of truth)
+2. Update changelog
+3. Create release commit
+4. Tag release
+5. Push tags
 
 ### Pre-release Checklist
 

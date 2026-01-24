@@ -9,6 +9,20 @@ and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0
 [Unreleased]
 ------------
 
+[0.5.0] - 2025-01-24
+---------------------
+
+Changed
+~~~~~~~
+
+* **Version: single source of truth in pyproject.toml** — Version is now read only from ``pyproject.toml``. Added ``_version.py`` that uses ``importlib.metadata`` when the package is installed, or reads ``pyproject.toml`` when running from source. Removed hardcoded ``__version__`` from ``__init__.py``. CLI and ``depcon.__version__`` both derive from this.
+* Release and contributing docs now instruct to update the version only in ``pyproject.toml`` (removed the ``__init__.py`` step).
+
+Fixed
+~~~~~
+
+* Addressed Ruff lint findings: B007 (unused loop variables), N806 (lowercase variable in ``except``), SIM102 (nested ``if``s), W293 (trailing blanks in docstrings), N805 (Pydantic ``@field_validator`` ``cls``), B904 (``raise ... from`` in parsers).
+
 [0.4.1] - 2025-12-08
 ---------------------
 

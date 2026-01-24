@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -13,24 +13,24 @@ class DependencySpec(BaseModel):
     """Represents a single dependency specification."""
 
     name: str = Field(..., description="Package name")
-    version_specs: List[str] = Field(
+    version_specs: list[str] = Field(
         default_factory=list, description="Version specifications"
     )
-    extras: List[str] = Field(default_factory=list, description="Package extras")
-    url: Optional[str] = Field(None, description="Direct URL to package")
-    path: Optional[str] = Field(None, description="Local path to package")
+    extras: list[str] = Field(default_factory=list, description="Package extras")
+    url: str | None = Field(None, description="Direct URL to package")
+    path: str | None = Field(None, description="Local path to package")
     editable: bool = Field(False, description="Whether this is an editable install")
-    markers: Optional[str] = Field(None, description="Environment markers")
+    markers: str | None = Field(None, description="Environment markers")
 
     @field_validator("name")
-    def validate_name(cls, v: str) -> str:
+    def validate_name(cls, v: str) -> str:  # noqa: N805
         """Validate package name format."""
         if not v or not v.strip():
             raise ValueError("Package name cannot be empty")
         return v.strip().lower()
 
     @field_validator("version_specs")
-    def validate_version_specs(cls, v: List[str]) -> List[str]:
+    def validate_version_specs(cls, v: list[str]) -> list[str]:  # noqa: N805
         """Validate version specifications."""
         for spec in v:
             if not re.match(r"^[<>=!~]+[0-9]", spec):
@@ -67,15 +67,15 @@ class DependencyGroup(BaseModel):
     """Represents a group of dependencies (e.g., dev, test, docs)."""
 
     name: str = Field(..., description="Group name")
-    dependencies: List[DependencySpec] = Field(
+    dependencies: list[DependencySpec] = Field(
         default_factory=list, description="Dependencies in this group"
     )
-    description: Optional[str] = Field(
+    description: str | None = Field(
         None, description="Optional description of the group"
     )
 
     @field_validator("name")
-    def validate_name(cls, v: str) -> str:
+    def validate_name(cls, v: str) -> str:  # noqa: N805
         """Validate group name."""
         if not v or not v.strip():
             raise ValueError("Group name cannot be empty")
@@ -105,33 +105,33 @@ class ProjectConfig(BaseModel):
     name: str = Field(..., description="Project name")
     version: str = Field(default="0.1.0", description="Project version")
     description: str = Field(default="", description="Project description")
-    readme: Optional[str] = Field(None, description="Path to README file")
+    readme: str | None = Field(None, description="Path to README file")
     requires_python: str = Field(
         default=">=3.8", description="Python version requirement"
     )
-    authors: List[Dict[str, str]] = Field(
+    authors: list[dict[str, str]] = Field(
         default_factory=list, description="Project authors"
     )
-    license: Optional[Dict[str, str]] = Field(None, description="Project license")
-    keywords: List[str] = Field(default_factory=list, description="Project keywords")
-    classifiers: List[str] = Field(
+    license: dict[str, str] | None = Field(None, description="Project license")
+    keywords: list[str] = Field(default_factory=list, description="Project keywords")
+    classifiers: list[str] = Field(
         default_factory=list, description="Project classifiers"
     )
-    urls: Dict[str, str] = Field(default_factory=dict, description="Project URLs")
+    urls: dict[str, str] = Field(default_factory=dict, description="Project URLs")
 
     # Dependencies
-    dependencies: List[DependencySpec] = Field(
+    dependencies: list[DependencySpec] = Field(
         default_factory=list, description="Main dependencies"
     )
-    optional_dependencies: Dict[str, DependencyGroup] = Field(
+    optional_dependencies: dict[str, DependencyGroup] = Field(
         default_factory=dict, description="Optional dependency groups (PEP 621 extras)"
     )
-    dependency_groups: Dict[str, DependencyGroup] = Field(
+    dependency_groups: dict[str, DependencyGroup] = Field(
         default_factory=dict, description="Dependency groups (PEP 735, for uv, etc.)"
     )
 
     # Build system
-    build_system: Dict[str, Any] = Field(
+    build_system: dict[str, Any] = Field(
         default_factory=lambda: {
             "requires": ["hatchling"],
             "build-backend": "hatchling.build",
@@ -140,18 +140,18 @@ class ProjectConfig(BaseModel):
     )
 
     # Tool-specific configurations
-    tool_configs: Dict[str, Dict[str, Any]] = Field(
+    tool_configs: dict[str, dict[str, Any]] = Field(
         default_factory=dict, description="Tool-specific configurations"
     )
 
     def add_dependency(
         self,
         dep: DependencySpec,
-        group: Optional[str] = None,
+        group: str | None = None,
         use_dependency_groups: bool = True,
     ) -> None:
         """Add a dependency to the project.
-        
+
         Args:
             dep: The dependency to add
             group: Optional group name (dev, test, docs, etc.)
@@ -163,7 +163,7 @@ class ProjectConfig(BaseModel):
                 target_dict = self.dependency_groups
             else:
                 target_dict = self.optional_dependencies
-                
+
             if group not in target_dict:
                 target_dict[group] = DependencyGroup(name=group)
             target_dict[group].add_dependency(dep)
@@ -177,9 +177,9 @@ class ProjectConfig(BaseModel):
 
     def get_dependency_group(
         self, name: str, use_dependency_groups: bool = True
-    ) -> Optional[DependencyGroup]:
+    ) -> DependencyGroup | None:
         """Get a dependency group by name.
-        
+
         Args:
             name: Group name
             use_dependency_groups: If True, check dependency-groups,
@@ -192,11 +192,11 @@ class ProjectConfig(BaseModel):
     def create_dependency_group(
         self,
         name: str,
-        description: Optional[str] = None,
+        description: str | None = None,
         use_dependency_groups: bool = True,
     ) -> DependencyGroup:
         """Create a new dependency group.
-        
+
         Args:
             name: Group name
             description: Optional description
@@ -215,10 +215,10 @@ class ConversionOptions(BaseModel):
     """Options for dependency conversion."""
 
     # Input files
-    requirements_files: List[Path] = Field(
+    requirements_files: list[Path] = Field(
         default_factory=list, description="Requirements files to process"
     )
-    requirements_in_files: List[Path] = Field(
+    requirements_in_files: list[Path] = Field(
         default_factory=list, description="Requirements.in files to process"
     )
 
@@ -256,7 +256,7 @@ class ConversionOptions(BaseModel):
 
     # Build system
     build_backend: str = Field(default="hatchling", description="Build backend to use")
-    build_requires: List[str] = Field(
+    build_requires: list[str] = Field(
         default_factory=lambda: ["hatchling"], description="Build system requirements"
     )
 
@@ -267,7 +267,7 @@ class ConversionOptions(BaseModel):
     )
 
     @field_validator("requirements_files", "requirements_in_files")
-    def validate_files_exist(cls, v: List[Path]) -> List[Path]:
+    def validate_files_exist(cls, v: list[Path]) -> list[Path]:  # noqa: N805
         """Validate that input files exist."""
         for file_path in v:
             if not file_path.exists():

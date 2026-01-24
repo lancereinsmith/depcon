@@ -213,7 +213,9 @@ class TestProjectConfig:
     def test_add_optional_dependency_pep621(self):
         """Test adding optional dependency as PEP 621 extra."""
         config = ProjectConfig(name="test-project")
-        dep = DependencySpec(name="requests", version_specs=[">=2.25.0"], extras=["security"])
+        dep = DependencySpec(
+            name="requests", version_specs=[">=2.25.0"], extras=["security"]
+        )
 
         config.add_dependency(dep, group="security", use_dependency_groups=False)
 
@@ -244,7 +246,9 @@ class TestProjectConfig:
         """Test creating new dependency group."""
         config = ProjectConfig(name="test-project")
 
-        group = config.create_dependency_group("test", "Test dependencies", use_dependency_groups=True)
+        group = config.create_dependency_group(
+            "test", "Test dependencies", use_dependency_groups=True
+        )
 
         assert group.name == "test"
         assert group.description == "Test dependencies"

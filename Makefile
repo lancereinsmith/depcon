@@ -65,10 +65,9 @@ build-check: ## Check built package
 release: ## Release package (requires proper version bumping)
 	@echo "Make sure you have:"
 	@echo "1. Updated version in pyproject.toml"
-	@echo "2. Updated __version__ in __init__.py"
-	@echo "3. Updated changelog"
-	@echo "4. Committed all changes"
-	@echo "5. Created and pushed tag"
+	@echo "2. Updated changelog"
+	@echo "3. Committed all changes"
+	@echo "4. Created and pushed tag"
 	@echo "Then run: uv publish"
 
 dev-setup: install-dev ## Set up development environment

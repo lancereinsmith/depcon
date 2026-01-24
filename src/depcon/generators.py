@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import shutil
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any
 
 from .models import DependencyGroup, DependencySpec, ProjectConfig
 
@@ -16,7 +16,7 @@ class PyProjectGenerator:
         """Initialize generator with project configuration."""
         self.config = config
 
-    def generate_toml_content(self) -> Dict[str, Any]:
+    def generate_toml_content(self) -> dict[str, Any]:
         """Generate TOML content from project configuration."""
         content = {}
 
@@ -105,13 +105,98 @@ class PyProjectGenerator:
         except ImportError:
             # Fallback to toml library
             try:
-                import toml
+                import toml  # type: ignore[import-untyped]
 
                 with open(file_path, "w", encoding="utf-8") as f:
                     toml.dump(content, f)
             except ImportError:
                 # Last resort: write basic TOML manually
                 self._write_toml_manually(content, file_path)
+
+    def _write_toml_manually(self, content: dict[str, Any], file_path: Path) -> None:
+        """Write TOML content manually as a fallback."""
+        lines = []
+
+        # Write build-system
+        if "build-system" in content:
+            lines.append("[build-system]")
+            for key, value in content["build-system"].items():
+                if isinstance(value, list):
+                    lines.append(f"{key} = {value}")
+                else:
+                    lines.append(f'{key} = "{value}"')
+            lines.append("")
+
+        # Write project section
+        if "project" in content:
+            lines.append("[project]")
+            project = content["project"]
+
+            # Basic fields
+            for field in [
+                "name",
+                "version",
+                "description",
+                "readme",
+                "requires-python",
+            ]:
+                if field in project:
+                    value = project[field]
+                    if isinstance(value, str):
+                        lines.append(f'{field} = "{value}"')
+                    else:
+                        lines.append(f"{field} = {value}")
+
+            # Dependencies
+            if "dependencies" in project and project["dependencies"]:
+                lines.append("dependencies = [")
+                for dep in project["dependencies"]:
+                    lines.append(f'    "{dep}",')
+                lines.append("]")
+
+            # Optional dependencies
+            if "optional-dependencies" in project and project["optional-dependencies"]:
+                lines.append("")
+                lines.append("[project.optional-dependencies]")
+                for group_name, deps in project["optional-dependencies"].items():
+                    lines.append(f"{group_name} = [")
+                    for dep in deps:
+                        lines.append(f'    "{dep}",')
+                    lines.append("]")
+
+            lines.append("")
+
+        # Write tool sections
+        if "tool" in content:
+            for tool_name, tool_config in content["tool"].items():
+                lines.append(f"[tool.{tool_name}]")
+                for key, value in tool_config.items():
+                    if isinstance(value, dict):
+                        lines.append(f"[tool.{tool_name}.{key}]")
+                        for sub_key, sub_value in value.items():
+                            if isinstance(sub_value, list):
+                                lines.append(f"{sub_key} = {sub_value}")
+                            else:
+                                lines.append(f'{sub_key} = "{sub_value}"')
+                    elif isinstance(value, list):
+                        lines.append(f"{key} = {value}")
+                    else:
+                        lines.append(f'{key} = "{value}"')
+                lines.append("")
+
+        # Write dependency-groups (PEP 735 - uv modern config)
+        if "dependency-groups" in content and content["dependency-groups"]:
+            lines.append("[dependency-groups]")
+            for group_name, deps in content["dependency-groups"].items():
+                lines.append(f"{group_name} = [")
+                for dep in deps:
+                    lines.append(f'    "{dep}",')
+                lines.append("]")
+            lines.append("")
+
+        # Write to file
+        with open(file_path, "w", encoding="utf-8") as f:
+            f.write("\n".join(lines))
 
     def merge_with_existing(self, file_path: Path) -> ProjectConfig:
         """Merge with existing pyproject.toml file."""
@@ -125,9 +210,9 @@ class PyProjectGenerator:
                 existing_data = tomli.load(f)
         except ImportError:
             try:
-                import toml
+                import toml  # type: ignore[import-untyped]
 
-                with open(file_path, "r", encoding="utf-8") as f:
+                with open(file_path, encoding="utf-8") as f:
                     existing_data = toml.load(f)
             except ImportError:
                 # If no TOML library is available, return empty config
@@ -188,8 +273,8 @@ class DependencyMerger:
         self.append_mode = append_mode
 
     def merge_dependencies(
-        self, existing: List[DependencySpec], new: List[DependencySpec]
-    ) -> List[DependencySpec]:
+        self, existing: list[DependencySpec], new: list[DependencySpec]
+    ) -> list[DependencySpec]:
         """Merge existing and new dependencies."""
         if not self.append_mode:
             return new
@@ -209,8 +294,8 @@ class DependencyMerger:
         return list(existing_map.values())
 
     def merge_dependency_groups(
-        self, existing: Dict[str, DependencyGroup], new: Dict[str, DependencyGroup]
-    ) -> Dict[str, DependencyGroup]:
+        self, existing: dict[str, DependencyGroup], new: dict[str, DependencyGroup]
+    ) -> dict[str, DependencyGroup]:
         """Merge existing and new dependency groups."""
         if not self.append_mode:
             return new
@@ -243,14 +328,14 @@ class PyProjectUpdater:
 
     def update_with_dependencies(
         self,
-        main_deps: List[DependencySpec],
-        dev_deps: List[DependencySpec],
-        test_deps: List[DependencySpec],
-        docs_deps: List[DependencySpec],
+        main_deps: list[DependencySpec],
+        dev_deps: list[DependencySpec],
+        test_deps: list[DependencySpec],
+        docs_deps: list[DependencySpec],
         use_dependency_groups: bool = True,
     ) -> None:
         """Update pyproject.toml with new dependencies.
-        
+
         Args:
             main_deps: Main runtime dependencies
             dev_deps: Development dependencies
@@ -288,7 +373,8 @@ class PyProjectUpdater:
         # Merge test dependencies
         if test_deps:
             test_group = config.get_dependency_group(
-                self.options.test_group_name, use_dependency_groups=use_dependency_groups
+                self.options.test_group_name,
+                use_dependency_groups=use_dependency_groups,
             )
             if not test_group:
                 test_group = config.create_dependency_group(
@@ -305,7 +391,8 @@ class PyProjectUpdater:
         # Merge documentation dependencies
         if docs_deps:
             docs_group = config.get_dependency_group(
-                self.options.docs_group_name, use_dependency_groups=use_dependency_groups
+                self.options.docs_group_name,
+                use_dependency_groups=use_dependency_groups,
             )
             if not docs_group:
                 docs_group = config.create_dependency_group(
@@ -350,9 +437,9 @@ class PyProjectUpdater:
             except ImportError:
                 try:
                     # toml (older, more compatible)
-                    import toml
+                    import toml  # type: ignore[import-untyped]
 
-                    with open(self.file_path, "r", encoding="utf-8") as f:
+                    with open(self.file_path, encoding="utf-8") as f:
                         data = toml.load(f)
                 except ImportError:
                     # If no TOML library is available, return empty config
@@ -458,10 +545,9 @@ class PyProjectUpdater:
 
     def _update_tool_configs(self, config: ProjectConfig) -> None:
         """Update tool-specific configurations."""
-        if self.options.enable_uv:
+        if self.options.enable_uv and "uv" not in config.tool_configs:
             # No longer write deprecated tool.uv.dev-dependencies; uv reads dependency-groups
-            if "uv" not in config.tool_configs:
-                config.tool_configs["uv"] = {}
+            config.tool_configs["uv"] = {}
 
         if self.options.enable_hatch:
             if "hatch" not in config.tool_configs:
@@ -471,88 +557,3 @@ class PyProjectUpdater:
             config.tool_configs["hatch"]["build"] = {
                 "targets": {"wheel": {"packages": ["src"]}}
             }
-
-    def _write_toml_manually(self, content: Dict[str, Any], file_path: Path) -> None:
-        """Write TOML content manually as a fallback."""
-        lines = []
-
-        # Write build-system
-        if "build-system" in content:
-            lines.append("[build-system]")
-            for key, value in content["build-system"].items():
-                if isinstance(value, list):
-                    lines.append(f"{key} = {value}")
-                else:
-                    lines.append(f'{key} = "{value}"')
-            lines.append("")
-
-        # Write project section
-        if "project" in content:
-            lines.append("[project]")
-            project = content["project"]
-
-            # Basic fields
-            for field in [
-                "name",
-                "version",
-                "description",
-                "readme",
-                "requires-python",
-            ]:
-                if field in project:
-                    value = project[field]
-                    if isinstance(value, str):
-                        lines.append(f'{field} = "{value}"')
-                    else:
-                        lines.append(f"{field} = {value}")
-
-            # Dependencies
-            if "dependencies" in project and project["dependencies"]:
-                lines.append("dependencies = [")
-                for dep in project["dependencies"]:
-                    lines.append(f'    "{dep}",')
-                lines.append("]")
-
-            # Optional dependencies
-            if "optional-dependencies" in project and project["optional-dependencies"]:
-                lines.append("")
-                lines.append("[project.optional-dependencies]")
-                for group_name, deps in project["optional-dependencies"].items():
-                    lines.append(f"{group_name} = [")
-                    for dep in deps:
-                        lines.append(f'    "{dep}",')
-                    lines.append("]")
-
-            lines.append("")
-
-        # Write tool sections
-        if "tool" in content:
-            for tool_name, tool_config in content["tool"].items():
-                lines.append(f"[tool.{tool_name}]")
-                for key, value in tool_config.items():
-                    if isinstance(value, dict):
-                        lines.append(f"[tool.{tool_name}.{key}]")
-                        for sub_key, sub_value in value.items():
-                            if isinstance(sub_value, list):
-                                lines.append(f"{sub_key} = {sub_value}")
-                            else:
-                                lines.append(f'{sub_key} = "{sub_value}"')
-                    elif isinstance(value, list):
-                        lines.append(f"{key} = {value}")
-                    else:
-                        lines.append(f'{key} = "{value}"')
-                lines.append("")
-
-        # Write dependency-groups (PEP 735 - uv modern config)
-        if "dependency-groups" in content and content["dependency-groups"]:
-            lines.append("[dependency-groups]")
-            for group_name, deps in content["dependency-groups"].items():
-                lines.append(f"{group_name} = [")
-                for dep in deps:
-                    lines.append(f'    "{dep}",')
-                lines.append("]")
-            lines.append("")
-
-        # Write to file
-        with open(file_path, "w", encoding="utf-8") as f:
-            f.write("\n".join(lines))

@@ -373,13 +373,12 @@ Follow semantic versioning (SemVer):
 Release Checklist
 ~~~~~~~~~~~~~~~~~
 
-1. Update version in ``pyproject.toml``
-2. Update ``__version__`` in ``__init__.py``
-3. Update changelog
-4. Run full test suite
-5. Build and test package
-6. Create release on GitHub
-7. Publish to PyPI
+1. Update version in ``pyproject.toml`` (single source of truth)
+2. Update changelog
+3. Run full test suite
+4. Build and test package
+5. Create release on GitHub
+6. Publish to PyPI
 
 Getting Help
 ------------

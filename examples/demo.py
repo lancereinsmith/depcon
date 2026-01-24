@@ -8,9 +8,9 @@ from pathlib import Path
 
 def run_command(cmd, description):
     """Run a command and display the result."""
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"🔧 {description}")
-    print(f"{'='*60}")
+    print(f"{'=' * 60}")
     print(f"Command: {' '.join(cmd)}")
     print()
 
@@ -125,7 +125,7 @@ def main():
         "Append Mode - Add to existing dependencies",
     )
 
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print("🎉 Demo completed!")
     print("=" * 60)
     print("\nGenerated files:")

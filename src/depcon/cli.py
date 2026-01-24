@@ -4,12 +4,12 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
-from typing import List, Optional
 
 import click
 from rich.console import Console
 from rich.table import Table
 
+from . import __version__
 from .generators import PyProjectUpdater
 from .models import ConversionOptions, DependencySpec, ProjectConfig
 from .parsers import group_dependencies_by_type, parse_requirements_file
@@ -18,7 +18,7 @@ console = Console()
 
 
 @click.group()
-@click.version_option(version="0.4.1")
+@click.version_option(version=__version__)
 def main():
     """Convert legacy requirements files to modern pyproject.toml format."""
     pass
@@ -119,10 +119,10 @@ def main():
 )
 @click.option("--verbose", "-v", is_flag=True, help="Enable verbose output")
 def convert(
-    requirements_files: List[Path],
-    dev_requirements_files: List[Path],
-    test_requirements_files: List[Path],
-    docs_requirements_files: List[Path],
+    requirements_files: list[Path],
+    dev_requirements_files: list[Path],
+    test_requirements_files: list[Path],
+    docs_requirements_files: list[Path],
     output_file: Path,
     append: bool,
     backup: bool,
@@ -132,9 +132,9 @@ def convert(
     dev_group: str,
     test_group: str,
     docs_group: str,
-    project_name: Optional[str],
+    project_name: str | None,
     project_version: str,
-    project_description: Optional[str],
+    project_description: str | None,
     python_version: str,
     use_optional_deps: bool,
     remove_duplicates: bool,
@@ -267,7 +267,7 @@ def convert(
     "--group",
     help="Show only specific dependency group (main, dev, test, docs, or optional group name)",
 )
-def show(pyproject_file: Path, output_format: str, group: Optional[str]):
+def show(pyproject_file: Path, output_format: str, group: str | None):
     """Show dependencies from pyproject.toml file."""
     try:
         updater = PyProjectUpdater(pyproject_file, ConversionOptions())
@@ -314,7 +314,7 @@ def show(pyproject_file: Path, output_format: str, group: Optional[str]):
             console.print(json.dumps(data, indent=2))
         elif output_format == "yaml":
             try:
-                import yaml
+                import yaml  # type: ignore[import-untyped]
             except ImportError:
                 console.print(
                     "[red]yaml format requires PyYAML. Install with: pip install pyyaml[/red]"
@@ -354,7 +354,7 @@ def show(pyproject_file: Path, output_format: str, group: Optional[str]):
     default=False,
     help="Check if packages exist on PyPI",
 )
-def validate(pyproject_file: Path, group: Optional[str], check_pypi: bool):
+def validate(pyproject_file: Path, group: str | None, check_pypi: bool):
     """Validate pyproject.toml dependencies."""
     try:
         updater = PyProjectUpdater(pyproject_file, ConversionOptions())
@@ -503,7 +503,7 @@ def check(pyproject_file: Path, check_duplicates: bool, check_missing: bool):
         if check_missing:
             # Check if optional dependencies reference missing main dependencies
             main_dep_names = {dep.name for dep in config.dependencies}
-            for name, group in config.optional_dependencies.items():
+            for _name, group in config.optional_dependencies.items():
                 for dep in group.dependencies:
                     if dep.name not in main_dep_names:
                         # This is fine, just a note
@@ -529,7 +529,7 @@ def check(pyproject_file: Path, check_duplicates: bool, check_missing: bool):
         sys.exit(1)
 
 
-def _check_pypi_availability(config: ProjectConfig, group: Optional[str]) -> None:
+def _check_pypi_availability(config: ProjectConfig, group: str | None) -> None:
     """Check if packages are available on PyPI."""
     try:
         import json
@@ -609,9 +609,9 @@ def export(pyproject_file: Path, output_file: Path, group: str, include_hashes: 
             dependencies.extend(config.dependencies)
 
         if group == "all":
-            for group_name, group_deps in config.optional_dependencies.items():
+            for _group_name, group_deps in config.optional_dependencies.items():
                 dependencies.extend(group_deps.dependencies)
-            for group_name, group_deps in config.dependency_groups.items():
+            for _group_name, group_deps in config.dependency_groups.items():
                 dependencies.extend(group_deps.dependencies)
         elif group in config.optional_dependencies:
             dependencies.extend(config.optional_dependencies[group].dependencies)
@@ -656,14 +656,15 @@ def export(pyproject_file: Path, output_file: Path, group: str, include_hashes: 
     help="Path to requirements.txt file to compare",
 )
 @click.option("--group", help="Dependency group to compare (main, dev, test, docs)")
-def diff(pyproject_file: Path, requirements_file: Optional[Path], group: Optional[str]):
+def diff(pyproject_file: Path, requirements_file: Path | None, group: str | None):
     """Show differences between pyproject.toml and requirements files."""
     try:
         try:
-            from rich.diff import Diff
+            from rich.diff import Diff  # type: ignore[import-untyped]
+
+            rich_diff = Diff
         except ImportError:
-            # Fallback if rich.diff is not available
-            Diff = None
+            rich_diff = None
 
         updater = PyProjectUpdater(pyproject_file, ConversionOptions())
         config = updater._load_existing_config()
@@ -672,12 +673,10 @@ def diff(pyproject_file: Path, requirements_file: Optional[Path], group: Optiona
         pyproject_deps = []
         if not group or group == "main":
             pyproject_deps.extend(config.dependencies)
-        if not group or group in config.optional_dependencies:
-            if group in config.optional_dependencies:
-                pyproject_deps.extend(config.optional_dependencies[group].dependencies)
-        if not group or group in config.dependency_groups:
-            if group in config.dependency_groups:
-                pyproject_deps.extend(config.dependency_groups[group].dependencies)
+        if group in config.optional_dependencies:
+            pyproject_deps.extend(config.optional_dependencies[group].dependencies)
+        if group in config.dependency_groups:
+            pyproject_deps.extend(config.dependency_groups[group].dependencies)
 
         pyproject_lines = sorted([dep.to_string() for dep in pyproject_deps])
 
@@ -688,8 +687,8 @@ def diff(pyproject_file: Path, requirements_file: Optional[Path], group: Optiona
 
             # Show diff
             console.print("[bold]Differences:[/bold]")
-            if Diff:
-                diff = Diff(pyproject_lines, req_lines)
+            if rich_diff:
+                diff = rich_diff(pyproject_lines, req_lines)
                 console.print(diff)
             else:
                 # Simple text diff
@@ -778,7 +777,7 @@ def sync(pyproject_file: Path, group: tuple, dry_run: bool):
         sys.exit(1)
 
 
-def _print_dependency_summary(grouped_deps: dict[str, List[DependencySpec]]) -> None:
+def _print_dependency_summary(grouped_deps: dict[str, list[DependencySpec]]) -> None:
     """Print a summary of grouped dependencies."""
     table = Table(title="Dependency Summary")
     table.add_column("Group", style="cyan")
@@ -858,7 +857,7 @@ def _validate_dependency(dep: DependencySpec) -> bool:
 
 
 def _remove_duplicate_dependencies(
-    grouped_deps: dict[str, List[DependencySpec]],
+    grouped_deps: dict[str, list[DependencySpec]],
 ) -> None:
     """Remove duplicate dependencies across groups, keeping the first occurrence."""
     seen_names = set()

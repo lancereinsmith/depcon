@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
-from typing import List, Optional, Tuple
 
 from packaging.requirements import Requirement
 
@@ -19,7 +18,7 @@ class RequirementsParser:
         self.file_path = file_path
         self.content = file_path.read_text(encoding="utf-8")
 
-    def parse(self) -> List[DependencySpec]:
+    def parse(self) -> list[DependencySpec]:
         """Parse requirements file and return list of dependencies."""
         dependencies = []
 
@@ -47,7 +46,7 @@ class RequirementsParser:
 
         return dependencies
 
-    def _parse_line(self, line: str, line_num: int) -> Optional[DependencySpec]:
+    def _parse_line(self, line: str, line_num: int) -> DependencySpec | None:
         """Parse a single line of requirements."""
         # Handle editable installs
         if line.startswith("-e ") or line.startswith("--editable "):
@@ -104,7 +103,7 @@ class RequirementsParser:
         try:
             req = Requirement(line)
         except Exception as e:
-            raise ValueError(f"Invalid package specification: {e}")
+            raise ValueError(f"Invalid package specification: {e}") from e
 
         # Extract version specs
         version_specs = []
@@ -122,7 +121,7 @@ class RequirementsParser:
             markers=markers,
         )
 
-    def _extract_name_and_extras(self, package_part: str) -> Tuple[str, List[str]]:
+    def _extract_name_and_extras(self, package_part: str) -> tuple[str, list[str]]:
         """Extract package name and extras from package specification."""
         if "[" in package_part and "]" in package_part:
             name_part, extras_part = package_part.split("[", 1)
@@ -166,7 +165,7 @@ class RequirementsParser:
 class PipToolsParser(RequirementsParser):
     """Parser for pip-tools generated requirements.txt files."""
 
-    def parse(self) -> List[DependencySpec]:
+    def parse(self) -> list[DependencySpec]:
         """Parse pip-tools requirements file."""
         dependencies = []
         current_dep = None
@@ -206,11 +205,11 @@ class PipToolsParser(RequirementsParser):
 class DependencyResolver:
     """Resolve and pin dependency versions."""
 
-    def __init__(self, requirements_files: List[Path]):
+    def __init__(self, requirements_files: list[Path]):
         """Initialize resolver with requirements files."""
         self.requirements_files = requirements_files
 
-    def resolve(self, dependencies: List[DependencySpec]) -> List[DependencySpec]:
+    def resolve(self, dependencies: list[DependencySpec]) -> list[DependencySpec]:
         """Resolve and pin dependency versions."""
         # This is a simplified resolver - in a real implementation,
         # you would use pip-tools or similar to resolve dependencies
@@ -227,14 +226,14 @@ class DependencyResolver:
 
         return resolved
 
-    def get_latest_versions(self, package_names: List[str]) -> dict[str, str]:
+    def get_latest_versions(self, package_names: list[str]) -> dict[str, str]:
         """Get latest versions for package names."""
         # This would typically use PyPI API or similar
         # For now, return empty dict
         return {}
 
 
-def parse_requirements_file(file_path: Path) -> List[DependencySpec]:
+def parse_requirements_file(file_path: Path) -> list[DependencySpec]:
     """Parse a requirements file and return dependencies."""
     if not file_path.exists():
         return []
@@ -254,8 +253,8 @@ def parse_requirements_file(file_path: Path) -> List[DependencySpec]:
 
 
 def group_dependencies_by_type(
-    dependencies: List[DependencySpec],
-) -> dict[str, List[DependencySpec]]:
+    dependencies: list[DependencySpec],
+) -> dict[str, list[DependencySpec]]:
     """Group dependencies by type (dev, test, docs, etc.)."""
     groups = {"main": [], "dev": [], "test": [], "docs": []}
 
