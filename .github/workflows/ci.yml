@@ -41,27 +41,15 @@ jobs:
     - name: Run linting
       run: |
         uv run ruff check src/ tests/ || echo "Ruff linting failed, but continuing..."
-        uv run black --check src/ tests/ || echo "Black formatting check failed, but continuing..."
+        uv run ruff format src/ tests/ || echo "Ruff formatting check failed, but continuing..."
 
     - name: Run type checking
       run: |
-        uv run mypy src/ || echo "Type checking failed, but continuing..."
+        uv run ty check src/ || echo "Type checking failed, but continuing..."
 
     - name: Run tests without coverage
       run: |
         uv run pytest -v
-
-    - name: Run tests with coverage
-      run: |
-        uv run pytest --cov=depcon --cov-report=xml --cov-report=term-missing -v
-
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v4
-      with:
-        file: ./coverage.xml
-        flags: unittests
-        name: codecov-umbrella
-        fail_ci_if_error: false
 
   build:
     runs-on: ubuntu-latest
