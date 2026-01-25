@@ -399,7 +399,7 @@ Comprehensive documentation is available at [https://lancereinsmith.github.io/de
 
 ## Contributing
 
-Contributions are welcome! Please see our [Contributing Guide](CONTRIBUTORS.md) and [Development Guide](DEVELOPMENT.md) for details.
+Contributions are welcome! Please see our [Contributing Guide](docs/contributing.md), [Development Guide](docs/development.md), [Contributors](docs/contributors.md), and [Code of Conduct](docs/code_of_conduct.md) for details.
 
 ### Quick Development Setup
 

@@ -30,19 +30,13 @@ jobs:
 
     - name: Build documentation
       run: |
-        cd docs
-        uv run make html
-
-    - name: Check for broken links
-      run: |
-        cd docs
-        uv run make linkcheck
+        uv run mkdocs build
 
     - name: Upload documentation artifacts
       uses: actions/upload-artifact@v4
       with:
         name: documentation
-        path: docs/_build/html/
+        path: site/
 
   deploy-docs:
     runs-on: ubuntu-latest
@@ -56,13 +50,13 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: documentation
-        path: docs/_build/html/
+        path: site/
 
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: docs/_build/html/
+        publish_dir: site/
 
   docs-preview:
     runs-on: ubuntu-latest
@@ -82,8 +76,7 @@ jobs:
 
     - name: Build documentation
       run: |
-        cd docs
-        uv run make html
+        uv run mkdocs build
 
     - name: Comment PR with docs preview
       uses: actions/github-script@v6
@@ -91,7 +84,7 @@ jobs:
         script: |
           const fs = require('fs');
           
-          const docsPath = 'docs/_build/html/index.html';
+          const docsPath = 'site/index.html';
           if (fs.existsSync(docsPath)) {
             github.rest.issues.createComment({
               issue_number: context.issue.number,

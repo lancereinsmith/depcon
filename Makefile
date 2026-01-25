@@ -34,13 +34,13 @@ type-check: ## Run type checking
 check: lint type-check test ## Run all checks
 
 docs: ## Build documentation
-	cd docs && uv run sphinx-build -b html . _build/html
+	uv run mkdocs build
 
 docs-serve: ## Serve documentation locally
-	cd docs && python -m http.server 8000 --directory _build/html
+	uv run mkdocs serve
 
 docs-clean: ## Clean documentation build
-	cd docs && rm -rf _build/
+	rm -rf site/
 
 clean: ## Clean build artifacts
 	rm -rf build/

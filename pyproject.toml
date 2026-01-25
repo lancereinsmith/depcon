@@ -63,11 +63,14 @@ dev = [
 ]
 test = ["pytest>=8.4.2", "pytest-cov>=7.0.0", "pytest-mock>=3.15.1"]
 docs = [
-    "sphinx>=9.1.0",
-    "sphinx-rtd-theme>=3.1.0",
-    "myst-parser>=5.0.0",
-    "sphinx-autodoc-typehints>=3.6.2",
+    "mkdocs>=1.6.0",
+    "mkdocs-material>=9.5.0",
+    "mkdocstrings[python]>=0.26.0",
+    "pymdown-extensions>=10.0",
 ]
+
+[tool.uv]
+default-groups = ["dev", "test", "docs"]
 
 # ——— Ruff: lint and format (replaces black, isort, flake8) ———
 [tool.ruff]
@@ -92,7 +95,7 @@ exclude = ["tests"]
 # ——— rumdl: markdown format (mkdocs flavor) ———
 # Global options live under [tool.rumdl]; [tool.rumdl.global] is for .rumdl.toml only.
 [tool.rumdl]
-flavor = "sphinx"
+flavor = "mkdocs"
 respect-gitignore = true
 disable = ["MD007", "MD013", "MD031", "MD033", "MD046"]
 exclude = [".git", ".github", "node_modules", "vendor", "dist", "build", "CHANGELOG.md", "LICENSE.md"]

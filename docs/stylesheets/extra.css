@@ -1,0 +1,11 @@
+/* Extra styles for depcon documentation (MkDocs Material) */
+
+/* Preserve green accent for code and emphasis where desired */
+code {
+  border-radius: 3px;
+}
+
+/* Command example blocks */
+.md-typeset pre > code {
+  border-radius: 6px;
+}

@@ -1,0 +1,79 @@
+# MkDocs configuration for depcon documentation
+# https://www.mkdocs.org/user-guide/configuration/
+
+site_name: depcon
+site_description: Convert legacy requirements files to modern pyproject.toml format with full PEP 621 support
+site_url: https://lancereinsmith.github.io/depcon/
+repo_url: https://github.com/lancereinsmith/depcon
+repo_name: lancereinsmith/depcon
+edit_uri: edit/master/docs/
+
+copyright: "2026, Lance Reinsmith"
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: green
+      accent: light green
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: green
+      accent: light green
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - content.action.edit
+    - content.action.view
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.suggest
+    - search.highlight
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          options:
+            show_source: true
+            show_root_heading: true
+            show_root_full_path: false
+            members: true
+            undoc_members: true
+            show_inheritance: true
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - tables
+
+extra_css:
+  - stylesheets/extra.css
+
+nav:
+  - Home: index.md
+  - Installation: installation.md
+  - Quick Start: quickstart.md
+  - User Guide: user_guide.md
+  - API Reference: api_reference.md
+  - Examples: examples.md
+  - Contributing: contributing.md
+  - Development: development.md
+  - Workflows: workflows.md
+  - Contributors: contributors.md
+  - Code of Conduct: code_of_conduct.md
+  - Changelog: changelog.md
