@@ -390,12 +390,13 @@ poetry install
 
 Comprehensive documentation is available at [https://lancereinsmith.github.io/depcon/](https://lancereinsmith.github.io/depcon/).
 
-- **[Installation Guide](https://lancereinsmith.github.io/depcon/installation.html)** - Detailed installation instructions
-- **[Quick Start](https://lancereinsmith.github.io/depcon/quickstart.html)** - Get up and running quickly
-- **[User Guide](https://lancereinsmith.github.io/depcon/user_guide.html)** - Complete feature reference
-- **[API Reference](https://lancereinsmith.github.io/depcon/api_reference.html)** - Detailed API documentation
-- **[Examples](https://lancereinsmith.github.io/depcon/examples.html)** - Real-world usage examples
-- **[Contributing](https://lancereinsmith.github.io/depcon/contributing.html)** - How to contribute to the project
+- **[Installation Guide](https://lancereinsmith.github.io/depcon/installation/)** - Detailed installation instructions
+- **[Quick Start](https://lancereinsmith.github.io/depcon/quickstart)** - Get up and running quickly
+- **[User Guide](https://lancereinsmith.github.io/depcon/user_guide)** - Complete feature reference
+- **[API Reference](https://lancereinsmith.github.io/depcon/api_reference)** - Detailed API documentation
+- **[Examples](https://lancereinsmith.github.io/depcon/examples)** - Real-world usage examples
+- **[Contributing](https://lancereinsmith.github.io/depcon/contributing)** - How to contribute to the project
+- **[Chaneglog](https://lancereinsmith.github.io/depcon/changelog)** - Changelog
 
 ## Contributing
 
@@ -421,71 +422,3 @@ make check
 ## License
 
 depcon is licensed under the MIT License. See the LICENSE file for details.
-
-## Changelog
-
-### v0.5.0 (latest)
-
-- MkDocs-based documentation (mkdocs, mkdocs-material, mkdocstrings). API reference via mkdocstrings.
-- Doc pages: code_of_conduct, contributors, development, workflows (reference for `.github/workflows/`). Content from root `CODE_OF_CONDUCT.md`, `CONTRIBUTORS.md`, and `DEVELOPMENT.md` merged into docs; those files removed.
-- `[tool.uv]` `default-groups = ["dev", "test", "docs"]` in `pyproject.toml`.
-- **Version: single source of truth in pyproject.toml** — Version is read only from `pyproject.toml`. `_version.py` uses `importlib.metadata` when installed, or reads `pyproject.toml` from source. Removed hardcoded `__version__` from `__init__.py`. CLI and `depcon.__version__` both derive from this.
-- **Documentation: Sphinx → MkDocs** — All docs converted from RST to Markdown. `docs` dependency group: Sphinx deps replaced with mkdocs, mkdocs-material, mkdocstrings, pymdown-extensions. `[tool.rumdl]` flavor set to `mkdocs`. Makefile: `docs` / `docs-serve` / `docs-clean` use mkdocs and `site/`. GitHub docs workflow: `mkdocs build`, publish `site/` to GitHub Pages.
-- Docs trimmed: redundancy, novice-oriented content, and marketing removed; Code of Conduct shortened. Release/contributing docs: version only in `pyproject.toml`.
-
-### v0.4.1
-
-- Fixed broken LICENSE link in documentation
-- Fixed GitHub Actions workflows to use dependency-groups correctly
-- Improved dependency group nesting using PEP 735 `include-group` syntax
-
-### v0.4.0
-
-- New `list` command to list all dependency groups
-- New `check` command to check for common issues (duplicates, missing dependencies)
-- Enhanced `convert` command with `--use-optional-deps` flag to choose between dependency-groups and optional-dependencies
-- Enhanced `convert` command with `--remove-duplicates` flag
-- Enhanced `convert` command with `--strict` flag for strict error handling
-- Enhanced `show` command with `--group` option to filter by specific dependency group
-- Enhanced `validate` command with `--check-pypi` flag
-- Default Python version requirement updated to >=3.11
-- Improved duplicate dependency detection and removal
-- Better error messages and validation output
-
-### v0.3.0
-
-- Full PEP 735 support for dependency-groups
-- Proper distinction between dependency-groups (PEP 735) and optional-dependencies (PEP 621)
-- New `export` command to export dependencies to requirements.txt format
-- New `diff` command to compare dependencies between files
-- New `sync` command to sync dependencies from pyproject.toml to requirements files
-- Enhanced `show` command to display both dependency-groups and optional-dependencies
-- Improved validation for both dependency types
-- Updated documentation and examples
-- Better uv integration with modern dependency-groups format
-
-### v0.2.1
-
-- Initial release of depcon
-- Full PEP 621 support
-- Intelligent dependency grouping
-- Rich CLI interface
-- Multiple build backend support
-- Tool integration (uv, hatch, poetry)
-- Advanced validation
-- Comprehensive test suite
-
-### v0.2.0
-
-- Complete rewrite with modern architecture
-- Full PEP 621 support
-- Intelligent dependency grouping
-- Rich CLI interface
-- Advanced validation
-- Multiple build backend support
-- Tool integration (uv, hatch, poetry)
-
-### v0.1.x (Legacy)
-
-- Basic requirements.txt to pyproject.toml conversion
-- Limited feature set
