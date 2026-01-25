@@ -6,16 +6,16 @@ Reference for depcon commands and options.
 
 depcon provides several commands:
 
-- [convert](#convert-command) — Convert requirements files to pyproject.toml
-- [show](#show-command) — Display dependencies from pyproject.toml
-- [validate](#validate-command) — Validate pyproject.toml dependencies
-- [list](#list-command) — List all dependency groups
-- [check](#check-command) — Check for common issues
+- **convert** — Convert requirements files to pyproject.toml
+- **show**** — Display dependencies from pyproject.toml
+- **validate** — Validate pyproject.toml dependencies
+- **list**** — List all dependency groups
+- **check**** — Check for common issues
 - **export** — Export dependencies to requirements.txt
 - **diff** — Show differences between files
 - **sync** — Sync dependencies to requirements files
 
-## Convert {#convert-command}
+## Convert
 
 Converts requirements files to pyproject.toml.
 
@@ -74,7 +74,7 @@ depcon convert -r requirements.txt -d requirements-dev.txt -t requirements-test.
 depcon convert -r requirements.txt --project-name "x" --project-description "..." --append
 ```
 
-## Show {#show-command}
+## Show
 
 `-f, --file PATH` (default: pyproject.toml); `--format [table|json|yaml]`; `--group TEXT`.
 
@@ -84,7 +84,7 @@ depcon show --format json
 depcon show -f my-project.toml
 ```
 
-## Validate {#validate-command}
+## Validate
 
 `-f, --file`; `--group TEXT`; `--check-pypi / --no-check-pypi`.
 
@@ -93,7 +93,7 @@ depcon validate
 depcon validate --group dev
 ```
 
-## List {#list-command}
+## List
 
 `-f, --file`. Lists dependency groups.
 
@@ -101,7 +101,7 @@ depcon validate --group dev
 depcon list
 ```
 
-## Check {#check-command}
+## Check
 
 `-f, --file`; `--check-duplicates`; `--check-missing`. Finds duplicates and other issues.
 

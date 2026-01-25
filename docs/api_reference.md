@@ -1,113 +1,89 @@
 # API Reference
 
-This section provides detailed documentation for the depcon API. The API is organized into several modules.
+Manual reference for the depcon API. Source: [src/depcon/](https://github.com/lancereinsmith/depcon/blob/master/src/depcon/).
+
+---
 
 ## depcon.models
 
-The models module contains the core data structures used by depcon.
-
-::: depcon.models
-    options:
-      show_root_heading: true
-      show_symbol_type_heading: true
+Data models for dependency conversion.  
+[models.py](https://github.com/lancereinsmith/depcon/blob/master/src/depcon/models.py)
 
 ### DependencySpec
 
-::: depcon.models.DependencySpec
-    options:
-      show_root_heading: true
+Represents a single dependency specification (name, version_specs, extras, url, path, editable, markers).  
+`to_string()`, `to_pep621_string()`.
 
 ### DependencyGroup
 
-::: depcon.models.DependencyGroup
-    options:
-      show_root_heading: true
+Represents a group of dependencies (e.g. dev, test, docs).  
+`add_dependency()`, `remove_dependency()`.
 
 ### ProjectConfig
 
-::: depcon.models.ProjectConfig
-    options:
-      show_root_heading: true
+Complete project configuration (name, version, dependencies, optional_dependencies, dependency_groups, build_system, etc.).  
+`add_dependency()`, `get_dependency_group()`, `create_dependency_group()`.
 
 ### ConversionOptions
 
-::: depcon.models.ConversionOptions
-    options:
-      show_root_heading: true
+Options for conversion: input files, output path, backup, append, group names, resolve, sort, build_backend, etc.
+
+---
 
 ## depcon.parsers
 
-The parsers module handles parsing of various requirements file formats.
-
-::: depcon.parsers
-    options:
-      show_root_heading: true
-      show_symbol_type_heading: true
+Parsing of requirements file formats.  
+[parsers.py](https://github.com/lancereinsmith/depcon/blob/master/src/depcon/parsers.py)
 
 ### RequirementsParser
 
-::: depcon.parsers.RequirementsParser
-    options:
-      show_root_heading: true
+Parser for `requirements.txt` and `requirements.in`.  
+`parse()` → `list[DependencySpec]`.
 
 ### parse_requirements_file
 
-::: depcon.parsers.parse_requirements_file
+`parse_requirements_file(file_path: Path) -> list[DependencySpec]`  
+Parse a requirements file and return dependencies. Chooses `RequirementsParser` or `PipToolsParser` by content.
 
 ### group_dependencies_by_type
 
-::: depcon.parsers.group_dependencies_by_type
+`group_dependencies_by_type(dependencies: list[DependencySpec]) -> dict[str, list[DependencySpec]]`  
+Group dependencies into main, dev, test, docs by package-name heuristics.
+
+---
 
 ## depcon.generators
 
-The generators module handles creation and manipulation of pyproject.toml files.
-
-::: depcon.generators
-    options:
-      show_root_heading: true
-      show_symbol_type_heading: true
+Creation and manipulation of pyproject.toml.  
+[generators.py](https://github.com/lancereinsmith/depcon/blob/master/src/depcon/generators.py)
 
 ### PyProjectGenerator
 
-::: depcon.generators.PyProjectGenerator
-    options:
-      show_root_heading: true
+Generate pyproject.toml from `ProjectConfig`.  
+`generate_toml_content()` → dict; writes to file.
 
 ### PyProjectUpdater
 
-::: depcon.generators.PyProjectUpdater
-    options:
-      show_root_heading: true
+Update existing pyproject.toml with new dependencies.  
+`update_with_dependencies(main_deps, dev_deps, test_deps, docs_deps, use_dependency_groups)`.
+
+---
 
 ## depcon.cli
 
-The CLI module provides the command-line interface for depcon.
+Command-line interface.  
+[cli.py](https://github.com/lancereinsmith/depcon/blob/master/src/depcon/cli.py)
 
-::: depcon.cli
-    options:
-      show_root_heading: true
-      show_symbol_type_heading: true
+| Command   | Description |
+|----------|-------------|
+| `main`   | Click group; `depcon --version`, `depcon --help`. |
+| `convert` | Convert requirements files to pyproject.toml. |
+| `show`   | Show dependencies from pyproject.toml (table, json, yaml). |
+| `validate` | Validate pyproject.toml dependencies. |
+| `list_groups` | List all dependency groups. |
+| `check`  | Check for duplicates and other issues. |
+| `export` | Export dependencies to requirements.txt. |
+| `diff`   | Diff pyproject.toml vs requirements files. |
+| `sync`   | Sync pyproject.toml to requirements files. |
 
-### main
-
-::: depcon.cli.main
-
-### convert
-
-::: depcon.cli.convert
-
-### show
-
-::: depcon.cli.show
-
-### validate
-
-::: depcon.cli.validate
-
-## Exceptions
-
-depcon uses standard Python exceptions for error handling. No custom exceptions are defined.
-
-## Constants
-
-No module-level constants are defined in depcon.
+Run `depcon --help` and `depcon <command> --help` for options.

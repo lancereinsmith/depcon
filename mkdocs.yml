@@ -40,6 +40,7 @@ theme:
 plugins:
   - search
   - mkdocstrings:
+      default_handler: python
       handlers:
         python:
           paths: [src]
@@ -72,8 +73,4 @@ nav:
   - API Reference: api_reference.md
   - Examples: examples.md
   - Contributing: contributing.md
-  - Development: development.md
-  - Workflows: workflows.md
-  - Contributors: contributors.md
-  - Code of Conduct: code_of_conduct.md
   - Changelog: changelog.md

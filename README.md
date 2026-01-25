@@ -424,7 +424,16 @@ depcon is licensed under the MIT License. See the LICENSE file for details.
 
 ## Changelog
 
-### v0.4.1 (Latest)
+### v0.5.0 (latest)
+
+- MkDocs-based documentation (mkdocs, mkdocs-material, mkdocstrings). API reference via mkdocstrings.
+- Doc pages: code_of_conduct, contributors, development, workflows (reference for `.github/workflows/`). Content from root `CODE_OF_CONDUCT.md`, `CONTRIBUTORS.md`, and `DEVELOPMENT.md` merged into docs; those files removed.
+- `[tool.uv]` `default-groups = ["dev", "test", "docs"]` in `pyproject.toml`.
+- **Version: single source of truth in pyproject.toml** — Version is read only from `pyproject.toml`. `_version.py` uses `importlib.metadata` when installed, or reads `pyproject.toml` from source. Removed hardcoded `__version__` from `__init__.py`. CLI and `depcon.__version__` both derive from this.
+- **Documentation: Sphinx → MkDocs** — All docs converted from RST to Markdown. `docs` dependency group: Sphinx deps replaced with mkdocs, mkdocs-material, mkdocstrings, pymdown-extensions. `[tool.rumdl]` flavor set to `mkdocs`. Makefile: `docs` / `docs-serve` / `docs-clean` use mkdocs and `site/`. GitHub docs workflow: `mkdocs build`, publish `site/` to GitHub Pages.
+- Docs trimmed: redundancy, novice-oriented content, and marketing removed; Code of Conduct shortened. Release/contributing docs: version only in `pyproject.toml`.
+
+### v0.4.1
 
 - Fixed broken LICENSE link in documentation
 - Fixed GitHub Actions workflows to use dependency-groups correctly

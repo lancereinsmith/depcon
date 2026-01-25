@@ -4,62 +4,117 @@
 
 ### Single file
 
+Create a `requirements.txt` with your dependencies, then:
+
 ```bash
-# requirements.txt: requests>=2.25.0, numpy>=1.20.0, pandas>=1.3.0
 depcon convert -r requirements.txt
 ```
 
-Produces `pyproject.toml` with `[build-system]` (hatchling) and `[project]` `dependencies = [..]`.
+You get a `pyproject.toml` with `[build-system]` (hatchling) and `[project]` `dependencies`.
 
 ### Multiple files
 
 ```bash
-# requirements.txt, requirements-dev.txt, requirements-test.txt
-depcon convert -r requirements.txt -d requirements-dev.txt -t requirements-test.txt
+depcon convert \
+  -r requirements.txt \
+  -d requirements-dev.txt \
+  -t requirements-test.txt
 ```
 
-Main deps in `[project]` `dependencies`; dev/test in `[project.optional-dependencies]` or `[dependency-groups]` depending on `--use-optional-deps`.
+Main deps go in `[project]` `dependencies`; dev and test go in `[project.optional-dependencies]` or `[dependency-groups]` depending on `--use-optional-deps`.
 
-## More convert options
+---
+
+## Convert options
+
+### Full metadata
 
 ```bash
-# Full metadata
-depcon convert -r req.txt -d req-dev.txt -t req-test.txt --docs-requirements req-docs.txt \
-  --project-name "x" --project-description "..." --project-version "1.0.0" --python-version ">=3.12"
+depcon convert \
+  -r requirements.txt \
+  -d requirements-dev.txt \
+  -t requirements-test.txt \
+  --docs-requirements requirements-docs.txt \
+  --project-name "my-project" \
+  --project-description "Short description" \
+  --project-version "1.0.0" \
+  --python-version ">=3.12"
+```
 
-# Custom group names
-depcon convert -r req.txt -d req-dev.txt --dev-group "development" --test-group "testing"
+### Custom group names
 
-# Other backends
+```bash
+depcon convert -r requirements.txt -d requirements-dev.txt \
+  --dev-group "development" --test-group "testing"
+```
+
+### Other build backends
+
+```bash
 depcon convert -r requirements.txt --build-backend setuptools
 depcon convert -r requirements.txt --build-backend poetry
+```
 
-# Append, resolve
-depcon convert -r new-req.txt --append
+### Append and resolve
+
+```bash
+depcon convert -r new-requirements.txt --append
 depcon convert -r requirements.in --resolve
 ```
 
+---
+
 ## Project types
 
-**Django:** `-r requirements.txt -d requirements-dev.txt --project-name "my-django-app"` (typical reqs: Django, psycopg2, redis, celery; dev: pytest, pytest-django, ruff).
+### Django
 
-**Data science:** add `--docs-requirements requirements-docs.txt` when you have sphinx/mkdocs deps.
+Typical: Django, psycopg2, redis, celery in `requirements.txt`; pytest, pytest-django, ruff in `requirements-dev.txt`.
 
-**FastAPI:** same pattern; dev often includes pytest-asyncio, httpx.
+```bash
+depcon convert -r requirements.txt -d requirements-dev.txt \
+  --project-name "my-django-app" --project-description "A Django app"
+```
+
+### Data science
+
+Add `--docs-requirements` when you have sphinx/mkdocs in a separate file:
+
+```bash
+depcon convert -r requirements.txt -d requirements-dev.txt \
+  --docs-requirements requirements-docs.txt \
+  --project-name "data-tool"
+```
+
+### FastAPI
+
+Same pattern; dev often includes pytest-asyncio and httpx.
+
+```bash
+depcon convert -r requirements.txt -d requirements-dev.txt \
+  --project-name "my-api" --project-description "A FastAPI service"
+```
+
+---
 
 ## CI/CD
 
 ### GitHub Actions
 
 ```yaml
-- uses: actions/checkout@v4
-- uses: actions/setup-python@v5
-  with:
-    python-version: '3.12'
-- run: pip install uv
-- run: uvx depcon convert -r requirements.txt
-- run: uv sync
-- run: uv run pytest
+name: CI
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install uv
+      - run: uvx depcon convert -r requirements.txt
+      - run: uv sync
+      - run: uv run pytest
 ```
 
 ### Docker
@@ -76,6 +131,8 @@ WORKDIR /app
 CMD ["uv", "run", "python", "-m", "src.main"]
 ```
 
+---
+
 ## Project layout
 
 ```text
@@ -89,4 +146,4 @@ my-project/
     └── my_project/
 ```
 
-Prefer `>=` for minimum versions; avoid `==` unless required.
+Use `>=` for minimum versions; avoid `==` unless needed.
