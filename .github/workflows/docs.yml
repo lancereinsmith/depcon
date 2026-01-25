@@ -32,13 +32,13 @@ jobs:
       run: |
         uv run mkdocs build
 
-    - name: Upload documentation artifacts
-      uses: actions/upload-artifact@v4
+    - name: Upload documentation artifact for GitHub Pages
+      uses: actions/upload-pages-artifact@v3
       with:
-        name: documentation
         path: site/
 
   deploy-docs:
+    if: github.event_name != 'pull_request'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -47,18 +47,9 @@ jobs:
     needs: build-docs
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-
-    - name: Download documentation artifacts
-      uses: actions/download-artifact@v4
-      with:
-        name: documentation
-        path: site/
-
     - name: Deploy to GitHub Pages
       id: deployment
-      uses: actions/deploy-pages@v1
+      uses: actions/deploy-pages@v4
 
   docs-preview:
     runs-on: ubuntu-latest
