@@ -2,12 +2,15 @@
 
 from __future__ import annotations
 
+import logging
 import re
 from pathlib import Path
 
 from packaging.requirements import Requirement
 
 from .models import DependencySpec
+
+logger = logging.getLogger(__name__)
 
 
 class RequirementsParser:
@@ -38,10 +41,13 @@ class RequirementsParser:
                 if dep:
                     dependencies.append(dep)
             except Exception as e:
-                print(
-                    f"Warning: Failed to parse line {line_num} in {self.file_path}: {line}"
+                logger.warning(
+                    "Failed to parse line %d in %s: %s (%s)",
+                    line_num,
+                    self.file_path,
+                    line,
+                    e,
                 )
-                print(f"Error: {e}")
                 continue
 
         return dependencies
@@ -192,10 +198,13 @@ class PipToolsParser(RequirementsParser):
                 else:
                     current_dep = None
             except Exception as e:
-                print(
-                    f"Warning: Failed to parse line {line_num} in {self.file_path}: {line}"
+                logger.warning(
+                    "Failed to parse line %d in %s: %s (%s)",
+                    line_num,
+                    self.file_path,
+                    line,
+                    e,
                 )
-                print(f"Error: {e}")
                 current_dep = None
                 continue
 

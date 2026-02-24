@@ -1,27 +1,27 @@
 # depcon
 
 ```text
-   |                             
- __|   _    _   __   __   _  _   
-/  |  |/  |/ \_/    /  \_/ |/ |  
+   |
+ __|   _    _   __   __   _  _
+/  |  |/  |/ \_/    /  \_/ |/ |
 \_/|_/|__/|__/ \___/\__/   |  |_/
-         /|                      
-         \|                      
+         /|
+         \|
 ```
 
 `depcon` is a modern, fully-featured tool for converting legacy `requirements.txt` files to the standardized `pyproject.toml` format with full PEP 621 support. It provides intelligent dependency grouping, validation, and seamless integration with modern Python packaging tools like `uv`, `hatchling`, and `setuptools`.
 
 ## Features
 
-- **Full PEP 621 & PEP 735 Support**: Complete support for modern Python packaging standards
+- **Full PEP 621, PEP 635 & PEP 735 Support**: Complete support for modern Python packaging standards
+- **PEP 639 License**: Generates modern `license = "MIT"` SPDX string format
 - **Intelligent Dependency Grouping**: Automatically categorizes dependencies into main, dev, test, and docs groups
+- **PEP 735 include-group**: Dependency groups can reference other groups (e.g., dev includes test)
 - **Proper Dependency Types**: Correctly distinguishes between dependency-groups (PEP 735) and optional-dependencies (PEP 621 extras)
 - **Advanced Parsing**: Handles complex requirements files including pip-tools, editable installs, and URLs
 - **Validation**: Built-in dependency validation and error checking
 - **Multiple Build Backends**: Support for hatchling, setuptools, and poetry
-- **Tool Integration**: Automatic configuration for uv, hatch, and other modern tools
 - **Rich CLI**: Beautiful command-line interface with progress indicators and summaries
-- **Flexible Configuration**: Extensive options for customization and control
 - **Export & Sync**: Export dependencies to requirements.txt and sync between formats
 
 ## Installation
@@ -96,7 +96,7 @@ The main command for converting requirements files to modern pyproject.toml form
 - `--project-name TEXT`: Project name (if creating new pyproject.toml)
 - `--project-version TEXT`: Project version (if creating new pyproject.toml)
 - `--project-description TEXT`: Project description (if creating new pyproject.toml)
-- `--python-version TEXT`: Python version requirement (default: >=3.11)
+- `--python-version TEXT`: Python version requirement (default: >=3.12)
 - `--use-optional-deps / --use-dependency-groups`: Use optional-dependencies (PEP 621 extras) instead of dependency-groups (PEP 735)
 - `--remove-duplicates / --keep-duplicates`: Remove duplicate dependencies across groups (default: remove)
 - `--strict / --no-strict`: Strict mode: fail on parsing errors instead of warning
@@ -199,7 +199,7 @@ depcon convert \
   --project-name "my-project" \
   --project-description "A great Python project" \
   --project-version "1.0.0" \
-  --python-version ">=3.9"
+  --python-version ">=3.12"
 
 # Use different build backend
 depcon convert -r requirements.txt --build-backend setuptools
@@ -272,7 +272,7 @@ depcon sync --dry-run
 
 ## Generated pyproject.toml Structure
 
-The tool generates modern `pyproject.toml` files following PEP 621 and PEP 735 standards:
+The tool generates modern `pyproject.toml` files following PEP 621, PEP 639, and PEP 735 standards:
 
 ```toml
 [build-system]
@@ -283,7 +283,8 @@ build-backend = "hatchling.build"
 name = "my-project"
 version = "1.0.0"
 description = "A great Python project"
-requires-python = ">=3.11"
+requires-python = ">=3.12"
+license = "MIT"
 dependencies = [
     "requests>=2.25.0",
     "numpy>=1.20.0",
@@ -296,8 +297,7 @@ security = [
 
 [dependency-groups]
 dev = [
-    "pytest>=7.0.0",
-    "black>=23.0.0",
+    {include-group = "test"},
     "ruff>=0.1.0",
 ]
 test = [
@@ -308,16 +308,13 @@ docs = [
     "sphinx>=5.0.0",
     "sphinx-rtd-theme>=1.0.0",
 ]
-
-[tool.hatch.build.targets.wheel]
-packages = ["src"]
 ```
 
 ### Understanding Dependency Types
 
 - **`dependencies`**: Core runtime dependencies required for the package
 - **`[project.optional-dependencies]`** (PEP 621): Installable extras (e.g., `pip install package[security]`)
-- **`[dependency-groups]`** (PEP 735): Development dependencies for tools like `uv` (not installable extras)
+- **`[dependency-groups]`** (PEP 735): Development dependencies for tools like `uv` (not installable extras). Supports `include-group` to compose groups.
 
 ## Supported File Formats
 
@@ -396,11 +393,11 @@ Comprehensive documentation is available at [https://lancereinsmith.github.io/de
 - **[API Reference](https://lancereinsmith.github.io/depcon/api_reference)** - Detailed API documentation
 - **[Examples](https://lancereinsmith.github.io/depcon/examples)** - Real-world usage examples
 - **[Contributing](https://lancereinsmith.github.io/depcon/contributing)** - How to contribute to the project
-- **[Chaneglog](https://lancereinsmith.github.io/depcon/changelog)** - Changelog
+- **[Changelog](https://lancereinsmith.github.io/depcon/changelog)** - Changelog
 
 ## Contributing
 
-Contributions are welcome! Please see our [Contributing Guide](docs/contributing.md), [Development Guide](docs/development.md), [Contributors](docs/contributors.md), and [Code of Conduct](docs/code_of_conduct.md) for details.
+Contributions are welcome! Please see our [Contributing Guide](docs/contributing.md) for details.
 
 ### Quick Development Setup
 
@@ -410,7 +407,7 @@ git clone https://github.com/lancereinsmith/depcon.git
 cd depcon
 
 # Install in development mode
-uv pip install -e ".[dev]"
+uv sync
 
 # Install pre-commit hooks
 pre-commit install

@@ -7,10 +7,10 @@ Reference for depcon commands and options.
 depcon provides several commands:
 
 - **convert** — Convert requirements files to pyproject.toml
-- **show**** — Display dependencies from pyproject.toml
+- **show** — Display dependencies from pyproject.toml
 - **validate** — Validate pyproject.toml dependencies
-- **list**** — List all dependency groups
-- **check**** — Check for common issues
+- **list** — List all dependency groups
+- **check** — Check for common issues
 - **export** — Export dependencies to requirements.txt
 - **diff** — Show differences between files
 - **sync** — Sync dependencies to requirements files
@@ -58,7 +58,7 @@ depcon convert -r requirements.txt
 - `--project-name TEXT`: Project name (if creating new pyproject.toml)
 - `--project-version TEXT`: Project version (if creating new pyproject.toml)
 - `--project-description TEXT`: Project description (if creating new pyproject.toml)
-- `--python-version TEXT`: Python version requirement (default: >=3.11)
+- `--python-version TEXT`: Python version requirement (default: >=3.12)
 - `--use-optional-deps / --use-dependency-groups`: Use optional-dependencies (PEP 621 extras) instead of dependency-groups (PEP 735)
 - `--remove-duplicates / --keep-duplicates`: Remove duplicate dependencies across groups (default: remove)
 - `--strict / --no-strict`: Strict mode: fail on parsing errors instead of warning
@@ -134,9 +134,18 @@ build-backend = "hatchling.build"
 
 Setuptools: `requires = ["setuptools>=61.0", "wheel"]`, `build-backend = "setuptools.build_meta"`. Poetry: `poetry-core`, `poetry.core.masonry.api`.
 
+## Generated output
+
+depcon generates modern pyproject.toml files following current standards:
+
+- **PEP 621**: Project metadata in `[project]`
+- **PEP 639**: License as SPDX string (`license = "MIT"`)
+- **PEP 735**: Development dependencies in `[dependency-groups]` with `include-group` support
+- **Default Python**: `>=3.12`
+
 ## Tool integration
 
-Output uses `[dependency-groups]` for uv. For hatch: `[tool.hatch.build.targets.wheel]` with `packages = ["src"]`.
+Output uses `[dependency-groups]` (PEP 735) by default, which uv reads natively.
 
 ## Troubleshooting
 

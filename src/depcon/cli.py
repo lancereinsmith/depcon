@@ -100,7 +100,7 @@ def main():
 @click.option(
     "--project-description", help="Project description (if creating new pyproject.toml)"
 )
-@click.option("--python-version", default=">=3.11", help="Python version requirement")
+@click.option("--python-version", default=">=3.12", help="Python version requirement")
 @click.option(
     "--use-optional-deps/--use-dependency-groups",
     "use_optional_deps",
@@ -212,7 +212,7 @@ def convert(
 
         # Set project metadata if provided
         if project_name or project_description:
-            config = updater._load_existing_config()
+            config = updater.load_config()
             if project_name:
                 config.name = project_name
             if project_description:
@@ -271,7 +271,7 @@ def show(pyproject_file: Path, output_format: str, group: str | None):
     """Show dependencies from pyproject.toml file."""
     try:
         updater = PyProjectUpdater(pyproject_file, ConversionOptions())
-        config = updater._load_existing_config()
+        config = updater.load_config()
 
         # Filter by group if specified
         if group:
@@ -358,7 +358,7 @@ def validate(pyproject_file: Path, group: str | None, check_pypi: bool):
     """Validate pyproject.toml dependencies."""
     try:
         updater = PyProjectUpdater(pyproject_file, ConversionOptions())
-        config = updater._load_existing_config()
+        config = updater.load_config()
 
         errors = []
         warnings = []
@@ -423,7 +423,7 @@ def list_groups(pyproject_file: Path):
     """List all dependency groups in pyproject.toml."""
     try:
         updater = PyProjectUpdater(pyproject_file, ConversionOptions())
-        config = updater._load_existing_config()
+        config = updater.load_config()
 
         table = Table(title="Dependency Groups")
         table.add_column("Type", style="cyan")
@@ -469,7 +469,7 @@ def check(pyproject_file: Path, check_duplicates: bool, check_missing: bool):
     """Check pyproject.toml for common issues."""
     try:
         updater = PyProjectUpdater(pyproject_file, ConversionOptions())
-        config = updater._load_existing_config()
+        config = updater.load_config()
 
         issues = []
         warnings = []
@@ -602,7 +602,7 @@ def export(pyproject_file: Path, output_file: Path, group: str, include_hashes: 
     """Export dependencies from pyproject.toml to requirements.txt format."""
     try:
         updater = PyProjectUpdater(pyproject_file, ConversionOptions())
-        config = updater._load_existing_config()
+        config = updater.load_config()
 
         dependencies = []
         if group == "main" or group == "all":
@@ -667,7 +667,7 @@ def diff(pyproject_file: Path, requirements_file: Path | None, group: str | None
             rich_diff = None
 
         updater = PyProjectUpdater(pyproject_file, ConversionOptions())
-        config = updater._load_existing_config()
+        config = updater.load_config()
 
         # Get dependencies from pyproject.toml
         pyproject_deps = []
@@ -737,7 +737,7 @@ def sync(pyproject_file: Path, group: tuple, dry_run: bool):
     """Sync dependencies from pyproject.toml to requirements files."""
     try:
         updater = PyProjectUpdater(pyproject_file, ConversionOptions())
-        config = updater._load_existing_config()
+        config = updater.load_config()
 
         group_list = list(group) if group else ["main", "dev", "test", "docs"]
 

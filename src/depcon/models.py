@@ -59,8 +59,21 @@ class DependencySpec(BaseModel):
         return "".join(parts)
 
     def to_pep621_string(self) -> str:
-        """Convert to PEP 621 compatible string format."""
-        return self.to_string()
+        """Convert to PEP 621 compatible string format.
+
+        Unlike to_string(), this omits editable flags and local paths
+        which are not valid in PEP 621 dependency specifiers.
+        """
+        parts = [self.name]
+        if self.extras:
+            parts[0] += f"[{','.join(self.extras)}]"
+        if self.url:
+            parts.append(f" @ {self.url}")
+        elif self.version_specs:
+            parts.extend(self.version_specs)
+        if self.markers:
+            parts.append(f"; {self.markers}")
+        return "".join(parts)
 
 
 class DependencyGroup(BaseModel):
@@ -69,6 +82,9 @@ class DependencyGroup(BaseModel):
     name: str = Field(..., description="Group name")
     dependencies: list[DependencySpec] = Field(
         default_factory=list, description="Dependencies in this group"
+    )
+    include_groups: list[str] = Field(
+        default_factory=list, description="Included dependency groups (PEP 735)"
     )
     description: str | None = Field(
         None, description="Optional description of the group"
@@ -107,12 +123,14 @@ class ProjectConfig(BaseModel):
     description: str = Field(default="", description="Project description")
     readme: str | None = Field(None, description="Path to README file")
     requires_python: str = Field(
-        default=">=3.8", description="Python version requirement"
+        default=">=3.12", description="Python version requirement"
     )
     authors: list[dict[str, str]] = Field(
         default_factory=list, description="Project authors"
     )
-    license: dict[str, str] | None = Field(None, description="Project license")
+    license: str | dict[str, str] | None = Field(
+        None, description="Project license (SPDX string per PEP 639)"
+    )
     keywords: list[str] = Field(default_factory=list, description="Project keywords")
     classifiers: list[str] = Field(
         default_factory=list, description="Project classifiers"

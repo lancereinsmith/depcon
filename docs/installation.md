@@ -18,26 +18,26 @@ pipx install depcon
 
 ```bash
 pip install depcon
-# pip install depcon[dev] | depcon[all]
 ```
 
 ## From source
 
 ```bash
 git clone https://github.com/lancereinsmith/depcon.git && cd depcon
-uv pip install -e ".[dev]"
-# or: pip install -e ".[dev]"
+uv sync
+# or: pip install -e .
 ```
 
-## Optional dependency groups
+## Dependency groups
 
-- **dev**: ruff, ty, pytest, pre-commit
-- **test**: pytest-cov, pytest-mock
+depcon uses PEP 735 dependency groups for development:
+
+- **dev**: ruff, ty, rumdl (includes test group)
+- **test**: pytest, pytest-cov, pytest-mock
 - **docs**: mkdocs, mkdocs-material, mkdocstrings
-- **all**: all of the above
 
-Example: `uv tool install depcon[dev,docs]`.
+Install all dev dependencies: `uv sync` (installs all default groups).
 
 ## Requirements
 
-Python ≥3.12. `uv`, `pip`, or `pipx` for installation.
+Python >=3.12. `uv`, `pip`, or `pipx` for installation.

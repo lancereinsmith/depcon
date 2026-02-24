@@ -184,7 +184,7 @@ class TestProjectConfig:
         assert config.name == "test-project"
         assert config.version == "0.1.0"
         assert config.description == ""
-        assert config.requires_python == ">=3.8"
+        assert config.requires_python == ">=3.12"
         assert config.dependencies == []
         assert config.optional_dependencies == {}
         assert config.dependency_groups == {}

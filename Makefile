@@ -1,35 +1,34 @@
-.PHONY: help install install-dev test test-cov lint format type-check docs clean build release
+.PHONY: help install install-dev test test-cov test-fast lint format type-check check docs docs-serve docs-clean clean build build-check release dev-setup ci demo validate show
 
 help: ## Show this help message
-	@echo "Available commands:"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
 install: ## Install package in production mode
-	uv pip install -e .
+	uv sync --no-dev
 
 install-dev: ## Install package in development mode with all dependencies
-	uv pip install -e ".[dev,test,docs]"
+	uv sync
 	pre-commit install
 
 test: ## Run tests
-	pytest
+	uv run pytest
 
 test-cov: ## Run tests with coverage
-	pytest --cov=depcon --cov-report=html --cov-report=term-missing
+	uv run pytest --cov=depcon --cov-report=html --cov-report=term-missing
 
 test-fast: ## Run tests without coverage (faster)
-	pytest --no-cov
+	uv run pytest --no-cov
 
-lint: ## Run linting
-	ruff check src/ tests/
-	black --check src/ tests/
+lint: ## Check code style
+	uv run ruff check src/ tests/
+	uv run ruff format --check src/ tests/
 
 format: ## Format code
-	black src/ tests/
-	ruff check src/ tests/ --fix
+	uv run ruff format src/ tests/
+	uv run ruff check --fix src/ tests/
 
 type-check: ## Run type checking
-	mypy src/
+	uv run ty check
 
 check: lint type-check test ## Run all checks
 
@@ -43,81 +42,40 @@ docs-clean: ## Clean documentation build
 	rm -rf site/
 
 clean: ## Clean build artifacts
-	rm -rf build/
-	rm -rf dist/
-	rm -rf *.egg-info/
-	rm -rf .pytest_cache/
-	rm -rf .coverage
-	rm -rf htmlcov/
-	rm -rf .mypy_cache/
-	rm -rf .ruff_cache/
+	rm -rf build/ dist/ *.egg-info/ .pytest_cache/ .coverage htmlcov/ .mypy_cache/ .ruff_cache/
 	find . -type d -name __pycache__ -exec rm -rf {} +
 	find . -type f -name "*.pyc" -delete
 
 build: ## Build package
 	uv build
 
-build-check: ## Check built package
+build-check: ## Build and verify package
 	uv build
 	uv pip install dist/*.whl
 	depcon --version
 
-release: ## Release package (requires proper version bumping)
-	@echo "Make sure you have:"
-	@echo "1. Updated version in pyproject.toml"
-	@echo "2. Updated changelog"
-	@echo "3. Committed all changes"
-	@echo "4. Created and pushed tag"
-	@echo "Then run: uv publish"
+release: ## Show release instructions
+	@echo "Release steps:"
+	@echo "1. Update version in pyproject.toml"
+	@echo "2. Update changelog"
+	@echo "3. Commit all changes"
+	@echo "4. Create and push tag: git tag v<version> && git push --tags"
+	@echo "5. GitHub Actions will publish to PyPI"
 
 dev-setup: install-dev ## Set up development environment
-	@echo "Development environment set up!"
-	@echo "Run 'make check' to verify everything is working"
+	@echo "Development environment ready! Run 'make check' to verify."
 
 ci: ## Run CI checks locally
-	pre-commit run --all-files
-	pytest --cov=depcon --cov-report=xml
-
-security: ## Run security checks
-	safety check
-	bandit -r src/
-
-benchmark: ## Run performance benchmarks
-	pytest --benchmark-only
-
-profile: ## Profile the code
-	python -m cProfile -o profile.stats -m depcon.cli --help
-	python -c "import pstats; pstats.Stats('profile.stats').sort_stats('cumulative').print_stats(20)"
-
-update-deps: ## Update dependencies
-	uv pip install --upgrade -e ".[dev,test,docs]"
-
-check-deps: ## Check for outdated dependencies
-	uv pip list --outdated
-
-install-hooks: ## Install pre-commit hooks
-	pre-commit install
-
-update-hooks: ## Update pre-commit hooks
-	pre-commit autoupdate
-
-run-hooks: ## Run pre-commit hooks on all files
-	pre-commit run --all-files
+	uv run ruff check src/ tests/
+	uv run ruff format --check src/ tests/
+	uv run ty check
+	uv run pytest --cov=depcon --cov-report=xml
 
 demo: ## Run demo script
-	python examples/demo.py
+	uv run python examples/demo.py
 
 validate: ## Validate pyproject.toml
-	depcon validate
+	uv run depcon validate
 
 show: ## Show dependencies
-	depcon show
-
-convert-example: ## Convert example requirements
-	depcon convert -r examples/requirements.txt --verbose
-
-# Development shortcuts
-dev: install-dev ## Alias for install-dev
-check-all: check ## Alias for check
-test-all: test-cov ## Alias for test-cov
-format-all: format ## Alias for format
+	uv run depcon show
