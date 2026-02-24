@@ -2,7 +2,14 @@
 
 ## Setup
 
-Fork, clone, then: `uv pip install -e ".[dev]"` and `pre-commit install`. Run `pytest` and `pre-commit run --all-files` before pushing.
+Fork, clone, then:
+
+```bash
+uv sync
+pre-commit install
+```
+
+Run `uv run pytest` and `pre-commit run --all-files` before pushing.
 
 ## Pull requests
 
@@ -10,7 +17,7 @@ Fork, clone, then: `uv pip install -e ".[dev]"` and `pre-commit install`. Run `p
 2. Ensure tests pass, lint is clean, docs updated.
 3. Push, open a PR, link related issues.
 
-**PR template:** Description; type (bug fix / feature / docs / …); confirm tests pass and docs/changelog updated if needed.
+**PR template:** Description; type (bug fix / feature / docs / ...); confirm tests pass and docs/changelog updated if needed.
 
 ## Issues
 
@@ -20,10 +27,10 @@ Fork, clone, then: `uv pip install -e ".[dev]"` and `pre-commit install`. Run `p
 
 ## Project layout
 
-- **models** — Data structures and validation
-- **parsers** — Requirements file parsing
-- **generators** — pyproject.toml generation
-- **cli** — Commands
+- **models** -- Data structures and validation
+- **parsers** -- Requirements file parsing
+- **generators** -- pyproject.toml generation
+- **cli** -- Commands
 
 ## Adding features
 
@@ -47,7 +54,7 @@ We pledge to make participation in this project harassment-free for everyone, re
 
 **Expected:** Welcoming and inclusive language; respect for differing views; accepting constructive criticism; empathy.
 
-**Unacceptable:** Sexualized language or imagery; trolling, insults, or personal/political attacks; harassment; publishing others’ private information without permission; other conduct inappropriate in a professional setting.
+**Unacceptable:** Sexualized language or imagery; trolling, insults, or personal/political attacks; harassment; publishing others' private information without permission; other conduct inappropriate in a professional setting.
 
 ### Reporting
 
